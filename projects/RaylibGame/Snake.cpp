@@ -39,3 +39,27 @@ void Snake::Reset()
     body = {Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}};
     direction = {1, 0};
 }
+
+bool Snake::HandleInput(int upKey, int downKey, int leftKey, int rightKey)
+{
+    bool keyPressed = false;
+
+    if (IsKeyPressed(upKey) && direction.y != 1) {
+        direction = {0, -1};
+        keyPressed = true;
+    }
+    if (IsKeyPressed(downKey) && direction.y != -1) {
+        direction = {0, 1};
+        keyPressed = true;
+    }
+    if (IsKeyPressed(leftKey) && direction.x != 1) {
+        direction = {-1, 0};
+        keyPressed = true;
+    }
+    if (IsKeyPressed(rightKey) && direction.x != -1) {
+        direction = {1, 0};
+        keyPressed = true;
+    }
+
+    return keyPressed;
+}

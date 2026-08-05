@@ -13,4 +13,6 @@ public:
     void Draw();
     void Update();
     void Reset();
+
+    bool HandleInput(int upKey, int downKey, int leftKey, int rightKey);
 };
