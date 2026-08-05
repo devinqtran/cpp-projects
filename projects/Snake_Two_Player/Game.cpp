@@ -3,7 +3,7 @@
 #include "raymath.h"
 
 Game::Game() : 
-    snake1({Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}}, {1, 0}, darkGreen),
+    snake1({Vector2{6, 9}, Vector2{5, 9}, Vector2{4, 9}}, {1, 0}, red),
     snake2({Vector2{6, 15}, Vector2{5, 15}, Vector2{4, 15}}, {1, 0}, BLUE),
     food(snake1.body, snake2.body)
 {

@@ -5,6 +5,8 @@
 Color red = {255, 0, 0, 255};
 Color green = {173, 204, 96, 255};
 Color darkGreen = {43, 51, 24, 255};
+Color lightTan = {252, 250, 246, 255};
+Color blue = {52, 177, 235, 255};
 
 int cellSize = 30;
 int cellCount = 25;

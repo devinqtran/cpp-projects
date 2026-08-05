@@ -31,18 +31,18 @@ int main()
         }
 
         BeginDrawing();
-        ClearBackground(green);
+        ClearBackground(lightTan);
 
-        DrawText("Retro Snake: Versus", offset - 5, 20, 40, darkGreen);
+        DrawText("Retro Snake: Versus", offset - 5, 20, 40, BLACK);
 
         // Draw Player 1 Score (Left)
-        DrawText(TextFormat("P1: %i", game.score1), offset - 5, offset + cellSize * cellCount + 10, 40, darkGreen);
+        DrawText(TextFormat("P1: %i", game.score1), offset - 5, offset + cellSize * cellCount + 10, 40, red);
         // Draw Player 2 Score (Right)
-        DrawText(TextFormat("P2: %i", game.score2), offset - 5 + (cellSize * cellCount) - 100, offset + cellSize * cellCount + 10, 40, BLUE);
+        DrawText(TextFormat("P2: %i", game.score2), offset - 5 + (cellSize * cellCount) - 100, offset + cellSize * cellCount + 10, 40, blue);
 
         game.Draw();
 
-        DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5, darkGreen);
+        DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * cellCount + 10, (float)cellSize * cellCount + 10}, 5, BLACK);
 
         if (!game.running && game.winner > 0)
         {
@@ -52,7 +52,7 @@ int main()
             if (game.winner == 1)
             {
                 winText = "Player 1 Wins!";
-                winColor = darkGreen;
+                winColor = red;
             }
             else if (game.winner == 2)
             {

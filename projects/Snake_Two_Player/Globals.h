@@ -6,6 +6,8 @@
 extern Color red;
 extern Color green;
 extern Color darkGreen;
+extern Color lightTan;
+extern Color blue;
 
 extern int cellSize;
 extern int cellCount;
