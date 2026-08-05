@@ -1,12 +1,12 @@
 # ==========================================
-# C++ Portfolio Additions: CMake, VS Code, & OS
+# C++ Portfolio Additions: CMake, VS Code, & Windows
 # ==========================================
 
 # VS Code
 .vscode/
+*.code-workspace
 
-# CMake & Build Directories
-build/
+# CMake & Build Artifacts
 CMakeCache.txt
 CMakeFiles/
 CMakeScripts/
@@ -19,17 +19,30 @@ cpack_config.cmake
 CPackConfig.cmake
 CPackSourceConfig.cmake
 
-# macOS/Linux OS Files
+# Explicitly ignore out-of-source build directories if you use these conventions
+build/
+out/
+bin/
+
+# FetchContent / External Dependencies
+_deps/
+
+# macOS/Linux OS Files (Good to keep if you share the repo)
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
 
-# macOS/Linux C++ Compiled Binaries
+# Compiled Binaries (Cross-platform)
 *.o
 *.so
 *.out
+*.exe
+*.dll
+*.lib
+*.a
+*.app
 
 # ==========================================
 # Original Visual Studio Template
