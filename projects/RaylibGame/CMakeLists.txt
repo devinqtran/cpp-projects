@@ -1,5 +1,11 @@
 # Create the executable from your source code
-add_executable(RaylibGame main.cpp)
+add_executable(RaylibGame 
+    main.cpp
+    Globals.cpp
+    Snake.cpp
+    Food.cpp
+    Game.cpp
+    )
 
 # Link the raylib library to your game
 target_link_libraries(RaylibGame PRIVATE raylib)
