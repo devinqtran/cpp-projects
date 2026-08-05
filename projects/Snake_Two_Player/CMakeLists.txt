@@ -1,4 +1,9 @@
-add_executable(Snake_Two_Player main.cpp)
+add_executable(Snake_Two_Player main.cpp
+    Globals.cpp
+    Snake.cpp
+    Food.cpp
+    Game.cpp
+    )
 
 target_link_libraries(Snake_Two_Player PRIVATE raylib)
 
