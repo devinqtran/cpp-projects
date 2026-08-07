@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 enum TokenType {
     COMMA,
     PERIOD,
