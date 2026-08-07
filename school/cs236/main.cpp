@@ -3,7 +3,8 @@
 #include "Scanner.h"
 
 int main() {
-  Scanner s = Scanner(",.?()*+::-\n?");
+
+  Scanner s = Scanner("'abc',");
   Token t = s.scanToken();
   while (t.getType() != END) {
       cout << t.toString() << endl;
