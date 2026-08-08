@@ -138,6 +138,58 @@ public:
             }
         }
 
+        // Check for comments
+        // Line comment # - consume through \nl
+        // Block comment start #| end |#
+        // Multiline comment
+        if (c == '#')
+        {
+            int startLine = line;
+
+            // Check for block comment start
+            if (input.size() >= 2 && input.at(1) == '|')
+            {
+                string value = "#|";
+                input = input.substr(2); // take first two characters #|
+
+                // Looop until one of the cases is met, regular loop will just consume char and move on
+                while (true)
+                {
+                    // Case: only opening #|
+                    if (input.empty())
+                    {
+                        return Token(UNDEFINED, value, startLine); // never found "|#"
+                    }
+
+                    // Case: both sets |#
+                    if (input.at(0) == '|' && input.size() >= 2 && input.at(1) == '#')
+                    {
+                        value += "|#";
+                        input = input.substr(2);
+                        return Token(COMMENT, value, startLine);
+                    }
+
+                    // New line
+                    if (input.at(0) == '\n')
+                    {
+                        line++;
+                    }
+                    value += input.at(0);
+                    input = input.substr(1);
+                }
+            }
+
+            // Line comment
+            string value = "#";
+            input = input.substr(1);
+            while (!input.empty() && input.at(0) != '\n')
+            {
+                value += input.at(0);
+                input = input.substr(1);
+            }
+            return Token(COMMENT, value, startLine);
+        }
+
         // Check for all other options
         input = input.substr(1);
         return Token(UNDEFINED, string(1, c), line);
