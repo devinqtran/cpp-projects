@@ -6,7 +6,7 @@ int sum(int x, int y) {
 
 int main() {
 
-    std::cin <<
+
     std::cout << sum(11, 5) << "\n";
 
     std::string name = "Mary";

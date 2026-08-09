@@ -9,6 +9,7 @@ public:
     Snake snake1;
     Snake snake2;
     Food food;
+
     bool running;
     int score1;
     int score2;
