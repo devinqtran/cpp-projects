@@ -61,6 +61,42 @@ public:
         count++;
     }
 
+    // Checks if the list has no elements
+    bool IsEmpty() const
+    {
+        return head == nullptr;
+    }
+
+    // Add this inside the LinkedList class
+    T operator[](int index)
+    {
+        Node *current = head;
+        int count = 0;
+        while (current != nullptr)
+        {
+            if (count == index)
+                return current->data;
+            count++;
+            current = current->next;
+        }
+        return nullptr; // Assuming this is used with pointers
+    }
+
+    // Searches for a value and returns it if found, or nullptr/0 if not
+    T Find(const T &value)
+    {
+        Node *current = head;
+        while (current != nullptr)
+        {
+            if (current->data == value)
+            {
+                return current->data; // Found it
+            }
+            current = current->next;
+        }
+        return nullptr; // Not found
+    }
+
     // Free all nodes to prevent memory leaks
     void clear()
     {
