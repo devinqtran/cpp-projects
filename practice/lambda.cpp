@@ -16,4 +16,8 @@ int main()
                                  { return n > threshold; });
 
     std::cout << "Count above " << threshold << ": " << matches << "\n";
+
+    std::vector<int> numbers1 = {1, 4, 6, 7, 2, 3, 5, 9, 8};
+    
+
 }
