@@ -1,14 +1,31 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
 // Copy
 string str = "Devin";
 char *p = &str.at(0);
+
+
+
 vector<int> nums = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 vector<int> nums2(10, 0); // creates vector nums2 of size 10 with default val 0
+
+float pow(float x, int n) {
+    if (n < 0) {
+        cout << "Sorry, negative exponent to pow()\n";
+    }
+    switch (n) {
+        case 0: return 1;
+        case 1: return x;
+        default: return x*pow(x, n-1);
+    }
+}
+
+extern float pow(float, int);
 
 int main()
 {
@@ -21,6 +38,15 @@ int main()
     {
         cout << num << "\n";
     }
+
+    float f;
+    int i;
+    cout << "Enter float: " << "\n";
+    cin >> f;
+    cout << "Enter int: " << "\n";
+    cin >> i;
+
+    cout << pow(f, i) << "\n";
 
     return 0;
 }
