@@ -2,8 +2,27 @@
 
 using namespace std;
 
+// declare global variable x
+int x;
+
+int a = 1; // declare a globally
+
+void f() {
+    int b = 1;
+    static int c = 1;
+    cout << " a = " << a++
+         << " b = " << b++
+         << " c = " << c++ << "\n";
+}
+
 int main()
 {
+    // hide global x
+    int x = 1;
+
+    // scope resolution operator to assign to global x
+    ::x = 2;
+
     const char *name = "Bjarne"; // pointer called name, pointing to the first letter of string literal "Bjarne"
 
     // A user defined type 'struct', this is a definition because iot defines layout of the complex type
@@ -24,7 +43,7 @@ int main()
     typedef complex point;
 
     // a function named real that receives a pointer to an object of the complex type
-    float real(complex * p) { return p->re; }; // returns the float re from the object
+    //float real(complex * p) { return p->re; }; // returns the float re from the object
 
     // a constant variable
     const double pi = 3.141592653897932385;
@@ -34,5 +53,10 @@ int main()
 
     // Compiler will print until \0 which is hidden in the text "Bjarne\0"
     cout << name << "\n";
+
+    while (a < 4) f();
+
+
+
     return 0;
 }
