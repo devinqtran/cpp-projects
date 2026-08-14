@@ -56,6 +56,11 @@ int main()
 
     while (a < 4) f();
 
+    // declare multiple in one line
+    int l, m, a, o;
+
+    void f();
+    void* pv; // pointer to an object of unknown type
 
 
     return 0;
