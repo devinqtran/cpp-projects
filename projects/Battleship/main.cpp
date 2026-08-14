@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "Globals.h"
+#include "Board.h"
 
 int main()
 {
@@ -7,8 +8,36 @@ int main()
 
     SetTargetFPS(60);
 
+    // Create board
+    Board myBoard;
+    Ship testShip(3);
+    myBoard.placeShip(testShip, 2, 2, HORIZONTAL);
+
     while (!WindowShouldClose())
     {
+        // Mouse input logic
+        // Check if the Left Mouse Button was clicked this frame
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            int mouseX = GetMouseX();
+            int mouseY = GetMouseY();
+
+            // 1. BOUNDS CHECK: Ensure the click was actually inside the 900x900 playing grid
+            // We don't want to register clicks in the 50px border!
+            if (mouseX >= offset && mouseX < boardEnd &&
+                mouseY >= offset && mouseY < boardEnd)
+            {
+
+                // 2. CONVERT PIXELS TO GRID:
+                // Subtract the border offset, then divide by the size of the cells
+                int col = (mouseX - offset) / cellSize;
+                int row = (mouseY - offset) / cellSize;
+
+                // 3. SEND ATTACK:
+                myBoard.receiveAttack(row, col);
+            }
+        }
+
         BeginDrawing();
         ClearBackground(water);
 
@@ -27,6 +56,41 @@ int main()
 
             // Horizontal lines (start at X=offset, go right to X=boardEnd)
             DrawLine(offset, linePos, boardEnd, linePos, navy);
+        }
+
+        // Loop for checking cell state
+        for (int row = 0; row < 10; row++)
+        {
+            for (int col = 0; col < 10; col++)
+            {
+
+                // Find the top-left corner of the current cell for drawing
+                int cellX = offset + (col * cellSize);
+                int cellY = offset + (row * cellSize);
+
+                // Find the center of the cell for drawing circles (pegs)
+                int centerX = cellX + (cellSize / 2);
+                int centerY = cellY + (cellSize / 2);
+
+                CellState state = myBoard.getCellState(row, col);
+
+                if (state == SHIP)
+                {
+                    // Draw a gray rectangle for the ship
+                    // We shrink it by 2 pixels so it doesn't overlap the grid lines
+                    DrawRectangle(cellX + 2, cellY + 2, cellSize - 4, cellSize - 4, GRAY);
+                }
+                else if (state == HIT)
+                {
+                    // Draw a red peg
+                    DrawCircle(centerX, centerY, cellSize / 3, RED);
+                }
+                else if (state == MISS)
+                {
+                    // Draw a white peg
+                    DrawCircle(centerX, centerY, cellSize / 3, WHITE);
+                }
+            }
         }
 
         EndDrawing();

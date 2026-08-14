@@ -7,8 +7,8 @@ add_executable(Battleship
     main.cpp
     Game.cpp
     Globals.cpp
-    # Board.cpp
-    # Ship.cpp
+    Board.cpp
+    Ship.cpp
     # Player.cpp
 )
 
