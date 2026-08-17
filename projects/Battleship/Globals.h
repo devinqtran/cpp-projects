@@ -13,6 +13,13 @@ enum Orientation {
     Vertical
 };
 
+enum GameState {
+    PLACEMENT,
+    PLAYER_TURN,
+    ENEMY_TURN,
+    GAME_OVER
+};
+
 extern Color water;
 extern Color navy;
 extern Color metal;

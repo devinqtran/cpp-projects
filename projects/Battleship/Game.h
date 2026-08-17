@@ -5,5 +5,15 @@
 
 class Game {
 public:
-    
+    Board board;
+    Ship ship;
+
+    Game();
+    ~Game();
+
+    void Draw();
+    void Update();
+    void getTurn();
+    void gameOver();
+    void checkFleet();
 };

@@ -1,4 +1,5 @@
 #include "Board.h"
+#include <vector>
 
 // Constructor - creates empty 10x10 grid
 Board::Board()
@@ -110,4 +111,14 @@ bool Board::receiveAttack(int row, int col)
 
     // If the cell was already a HIT or MISS, return false
     return false;
+}
+
+// Check if all the ships have been sunk
+bool allShipsSunk() {
+    for (int i = 0; i < ships.size() - 1; i++) {
+        if (!ships[i].isSunk()) {
+            return false;
+        }
+    }
+    return true;
 }

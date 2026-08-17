@@ -12,8 +12,10 @@ public:
     Board();
     bool placeShip(Ship newShip, int row, int col, Orientation dir);
     bool receiveAttack(int row, int col);
+    bool allShipsSunk();
 
     CellState getCellState(int row, int col) {
         return grid[row][col];
     }
+
 };
