@@ -6,7 +6,8 @@
 #include <ctime>
 
 // Pass game object by reference
-void drawBoard(Game& myGame) {
+void drawBoard(Game &myGame)
+{
     bool isPlacingShips = (myGame.state == 0);
 
     // Draw border
@@ -39,9 +40,12 @@ void drawBoard(Game& myGame) {
 
             // 3. Choose which board to read from based on the game state
             CellState state;
-            if (isPlacingShips) {
+            if (isPlacingShips)
+            {
                 state = myGame.human.board.getCellState(row, col);
-            } else {
+            }
+            else
+            {
                 state = myGame.enemy.board.getCellState(row, col);
             }
 
@@ -50,7 +54,8 @@ void drawBoard(Game& myGame) {
             {
                 // Only draw the gray rectangle if we are looking at the player's board
                 // This keeps the enemy board "blank" by hiding un-hit ships
-                if (isPlacingShips) {
+                if (isPlacingShips)
+                {
                     DrawRectangle(cellX + 2, cellY + 2, cellSize - 4, cellSize - 4, GRAY);
                 }
             }
@@ -79,7 +84,7 @@ int main()
 
     // Create board
     Game myGame;
-    
+
     while (!WindowShouldClose())
     {
         // Mouse input logic
@@ -103,7 +108,6 @@ int main()
                 std::cout << "Attempting to place ship at Row: " << row << ", Col: " << col << "\n";
                 std::cout << "Current state: " << myGame.state << "\n";
 
-
                 // 3. SEND ATTACK:
                 myGame.handleInput(row, col);
             }
@@ -120,8 +124,11 @@ int main()
         BeginDrawing();
         ClearBackground(water);
 
-        DrawText("Battleship", 15, 15, 25, navy);
+        GameState currentState = myGame.state;
 
+        DrawText("Battleship", 15, 15, 25, navy);
+        DrawText("Phase: ", 955, 15, 25, navy);
+        DrawText(GameStateStrings[myGame.state], 1045, 15, 25, navy);
         drawBoard(myGame);
 
         EndDrawing();

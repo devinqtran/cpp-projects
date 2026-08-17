@@ -46,7 +46,6 @@ void Game::handleInput(int row, int col)
     }
     else if (state == PLAYER_TURN)
     {
-
         // 1. Attack the enemy board
         bool attacked = enemy.board.receiveAttack(row, col);
 

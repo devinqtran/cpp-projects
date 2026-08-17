@@ -20,6 +20,8 @@ enum GameState {
     GAME_OVER
 };
 
+extern const char* GameStateStrings[];
+
 extern Color water;
 extern Color navy;
 extern Color metal;
