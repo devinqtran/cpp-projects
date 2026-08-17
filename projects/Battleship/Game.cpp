@@ -73,6 +73,7 @@ void Game::update()
         {
             humanWon = false;
             state = GAME_OVER;
+            // Draw text displaying winner/commands
         }
 
         // Handle the computer's turn
