@@ -1,19 +1,19 @@
 #pragma once
-#include "raylib.h"
-#include "Board.h"
-#include "Ship.h"
+#include "Player.h"
+#include "Globals.h"
 
 class Game {
 public:
-    Board board;
-    Ship ship;
+    Player human;
+    Player enemy;
+    GameState state;
+    bool humanWon;
 
     Game();
-    ~Game();
 
-    void Draw();
-    void Update();
-    void getTurn();
-    void gameOver();
-    void checkFleet();
+    // main.cpp will pass mouse clicks into this function
+    void handleInput(int row, int col); 
+    
+    // Updates game logic (like checking for wins or telling the AI to move)
+    void update(); 
 };

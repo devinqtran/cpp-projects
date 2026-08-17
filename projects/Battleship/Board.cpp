@@ -59,7 +59,7 @@ bool Board::placeShip(Ship newShip, int row, int col, Orientation dir)
     newShip.startRow = row;
     newShip.startCol = col;
     newShip.orientation = dir;
-    fleet.push_back(newShip);
+    ships.push_back(newShip);
 
     return true;
 }
@@ -76,11 +76,11 @@ bool Board::receiveAttack(int row, int col)
         grid[row][col] = HIT;
 
         // Loop through our list of ships to find out WHICH one got hit
-        for (int i = 0; i < fleet.size(); i++)
+        for (int i = 0; i < ships.size(); i++)
         {
 
             // We use a reference (&) so we modify the actual ship in the vector, not a copy
-            Ship &s = fleet[i];
+            Ship &s = ships[i];
 
             // Check if the current row/col falls inside this ship's coordinates
             if (s.orientation == HORIZONTAL)
@@ -114,8 +114,8 @@ bool Board::receiveAttack(int row, int col)
 }
 
 // Check if all the ships have been sunk
-bool allShipsSunk() {
-    for (int i = 0; i < ships.size() - 1; i++) {
+bool Board::allShipsSunk() {
+    for (int i = 0; i < ships.size(); i++) {
         if (!ships[i].isSunk()) {
             return false;
         }

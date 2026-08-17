@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "Globals.h"
 #include "Board.h"
+#include "Game.h"
 
 int main()
 {
@@ -9,9 +10,7 @@ int main()
     SetTargetFPS(60);
 
     // Create board
-    Board myBoard;
-    Ship testShip(3);
-    myBoard.placeShip(testShip, 2, 2, HORIZONTAL);
+    Game myGame;
 
     while (!WindowShouldClose())
     {
@@ -34,9 +33,11 @@ int main()
                 int row = (mouseY - offset) / cellSize;
 
                 // 3. SEND ATTACK:
-                myBoard.receiveAttack(row, col);
+                myGame.handleInput(row, col);
             }
         }
+
+        myGame.update();
 
         BeginDrawing();
         ClearBackground(water);
@@ -72,7 +73,7 @@ int main()
                 int centerX = cellX + (cellSize / 2);
                 int centerY = cellY + (cellSize / 2);
 
-                CellState state = myBoard.getCellState(row, col);
+                CellState state = myGame.enemy.board.getCellState(row, col);
 
                 if (state == SHIP)
                 {

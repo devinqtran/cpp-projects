@@ -6,7 +6,7 @@
 class Board {
 private:
     CellState grid[10][10];
-    std::vector<Ship> fleet;
+    std::vector<Ship> ships;
 
 public:
     Board();

@@ -9,7 +9,7 @@ add_executable(Battleship
     Globals.cpp
     Board.cpp
     Ship.cpp
-    # Player.cpp
+    Player.cpp
 )
 
 # Link the raylib library to your game
