@@ -3,6 +3,8 @@
 #include "Globals.h"
 
 class Game {
+private:
+    float aiTimer = 0.0f;
 public:
     Player human;
     Player enemy;

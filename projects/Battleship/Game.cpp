@@ -79,8 +79,18 @@ void Game::update()
         // Handle the computer's turn
         if (state == ENEMY_TURN)
         {
-            enemy.performAIMove(human.board);
-            state = PLAYER_TURN;
+            // Add the time elapsed since the last frame
+            aiTimer += GetFrameTime();
+
+            // Wait 1 second (1.0f) before letting the AI move
+            if (aiTimer >= 1.0f)
+            {
+                enemy.performAIMove(human.board);
+
+                // Reset the timer and give control back to the player
+                aiTimer = 0.0f;
+                state = PLAYER_TURN;
+            }
         }
     }
 }
