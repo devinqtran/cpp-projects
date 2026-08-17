@@ -28,24 +28,25 @@ void Game::handleInput(int row, int col)
     if (state == PLACEMENT)
     {
         int currentSize = shipsToPlace[currentShipIndex]; // retrieve size of current ship to be placed
-        Ship newShip(currentSize); // create a new ship object of the currentSize
+        Ship newShip(currentSize);                        // create a new ship object of the currentSize
 
         bool success = human.board.placeShip(newShip, row, col, currentOrientation);
 
-        if (success) {
-            currentShipIndex ++; // move to next ship
+        if (success)
+        {
+            currentShipIndex++; // move to next ship
 
-            if (currentShipIndex >= shipsToPlace.size()) {
+            if (currentShipIndex >= shipsToPlace.size())
+            {
                 enemy.autoPlaceShips(shipsToPlace); // place enemy ships randomly
 
                 state = PLAYER_TURN; // switch to player turn
             }
         }
-
     }
     else if (state == PLAYER_TURN)
     {
-        
+
         // 1. Attack the enemy board
         bool attacked = enemy.board.receiveAttack(row, col);
 
@@ -57,32 +58,41 @@ void Game::handleInput(int row, int col)
     }
 }
 
-void Game::update() {
+void Game::update()
+{
     // Only check for wins or AI moves if we are actually playing the game!
-    if (state == PLAYER_TURN || state == ENEMY_TURN) {
-        
+    if (state == PLAYER_TURN || state == ENEMY_TURN)
+    {
+
         // Check for wins
-        if (enemy.board.allShipsSunk()) { // Make sure this matches your exact method name
+        if (enemy.board.allShipsSunk())
+        { // Make sure this matches your exact method name
             humanWon = true;
             state = GAME_OVER;
         }
-        else if (human.board.allShipsSunk()) {
+        else if (human.board.allShipsSunk())
+        {
             humanWon = false;
             state = GAME_OVER;
         }
 
         // Handle the computer's turn
-        if (state == ENEMY_TURN) {
-            enemy.performAIMove(human.board); 
+        if (state == ENEMY_TURN)
+        {
+            enemy.performAIMove(human.board);
             state = PLAYER_TURN;
         }
     }
 }
 
-void Game::rotateShip() {
-    if (currentOrientation == HORIZONTAL) {
+void Game::rotateShip()
+{
+    if (currentOrientation == HORIZONTAL)
+    {
         currentOrientation = VERTICAL;
-    } else {
+    }
+    else
+    {
         currentOrientation = HORIZONTAL;
     }
 }

@@ -10,7 +10,7 @@ int main()
     // Seed the random number generator so the AI behaves differently every game
     srand(time(NULL));
 
-    InitWindow(1000, 1000, "Battleship");
+    InitWindow(1200, 1000, "Battleship");
 
     SetTargetFPS(60);
 
