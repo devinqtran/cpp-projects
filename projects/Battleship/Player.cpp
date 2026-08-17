@@ -23,3 +23,25 @@ void Player::performAIMove(Board& enemyBoard) {
         }
     }
 }
+
+void Player::autoPlaceShips(std::vector<int> shipSizes) {
+    for (int i = 0; i < shipSizes.size(); i++) {
+        int currentSize = shipSizes[i];
+        bool placed = false;
+
+        // Keep trying random spots until it fits
+        while (!placed) {
+            int row = rand() % 10;
+            int col = rand() % 10;
+            
+            // rand() % 2 returns either 0 or 1. 
+            // Ternary operator (?) to turn that into HORIZONTAL or VERTICAL
+            Orientation dir = (rand() % 2 == 0) ? HORIZONTAL : VERTICAL;
+
+            Ship newShip(currentSize);
+            
+            // If it's a valid spot, placeShip returns true breaking while loop
+            placed = board.placeShip(newShip, row, col, dir);
+        }
+    }
+}

@@ -9,6 +9,10 @@ public:
     GameState state;
     bool humanWon;
 
+    std::vector<int> shipsToPlace;
+    int currentShipIndex;
+    Orientation currentOrientation;
+
     Game();
 
     // main.cpp will pass mouse clicks into this function
@@ -16,4 +20,6 @@ public:
     
     // Updates game logic (like checking for wins or telling the AI to move)
     void update(); 
+
+    void rotateShip();
 };

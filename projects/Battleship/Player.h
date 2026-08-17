@@ -1,5 +1,6 @@
 #pragma once
 #include "Board.h"
+#include <vector>
 
 // Represents competitor in the gfame
 // Hold players board
@@ -15,4 +16,6 @@ public:
     
     // AI move function
     void performAIMove(Board& enemyBoard);
+
+    void autoPlaceShips(std::vector<int> shipSizes);
 };

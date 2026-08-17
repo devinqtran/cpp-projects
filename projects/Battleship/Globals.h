@@ -10,7 +10,7 @@ enum CellState {
 
 enum Orientation {
     HORIZONTAL,
-    Vertical
+    VERTICAL
 };
 
 enum GameState {

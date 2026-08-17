@@ -3,6 +3,7 @@
 #include "raymath.h"
 #include "Board.h"
 #include "Player.h"
+#include <iostream>
 
 // Game class is referee/ manager
 // Holds pboth players
@@ -15,18 +16,36 @@ Game::Game() : human(false), enemy(true)
 {
     state = PLACEMENT;
     humanWon = false;
+
+    // Load ship queue
+    shipsToPlace = {5, 4, 3, 3, 2};
+    currentShipIndex = 0;
+    currentOrientation = HORIZONTAL;
 }
 
 void Game::handleInput(int row, int col)
 {
-    // What a click does depends entirely on the game state!
     if (state == PLACEMENT)
     {
-        // (Logic for placing human ships will go here)
-        // Once 5 ships are placed, change state to PLAYER_TURN
+        int currentSize = shipsToPlace[currentShipIndex]; // retrieve size of current ship to be placed
+        Ship newShip(currentSize); // create a new ship object of the currentSize
+
+        bool success = human.board.placeShip(newShip, row, col, currentOrientation);
+
+        if (success) {
+            currentShipIndex ++; // move to next ship
+
+            if (currentShipIndex >= shipsToPlace.size()) {
+                enemy.autoPlaceShips(shipsToPlace); // place enemy ships randomly
+
+                state = PLAYER_TURN; // switch to player turn
+            }
+        }
+
     }
     else if (state == PLAYER_TURN)
     {
+        
         // 1. Attack the enemy board
         bool attacked = enemy.board.receiveAttack(row, col);
 
@@ -38,25 +57,32 @@ void Game::handleInput(int row, int col)
     }
 }
 
-void Game::update()
-{
-    // Check for wins
-    if (enemy.board.allShipsSunk())
-    {
-        humanWon = true;
-        state = GAME_OVER;
-    }
-    else if (human.board.allShipsSunk())
-    {
-        humanWon = false;
-        state = GAME_OVER;
-    }
+void Game::update() {
+    // Only check for wins or AI moves if we are actually playing the game!
+    if (state == PLAYER_TURN || state == ENEMY_TURN) {
+        
+        // Check for wins
+        if (enemy.board.allShipsSunk()) { // Make sure this matches your exact method name
+            humanWon = true;
+            state = GAME_OVER;
+        }
+        else if (human.board.allShipsSunk()) {
+            humanWon = false;
+            state = GAME_OVER;
+        }
 
-    // Handle the computer's turn
-    if (state == ENEMY_TURN)
-    {
-        // (You might want to add a small Raylib timer here so it doesn't happen instantly!)
-        human.performAIMove(human.board); // Note: AI attacks the human's board!
-        state = PLAYER_TURN;
+        // Handle the computer's turn
+        if (state == ENEMY_TURN) {
+            enemy.performAIMove(human.board); 
+            state = PLAYER_TURN;
+        }
+    }
+}
+
+void Game::rotateShip() {
+    if (currentOrientation == HORIZONTAL) {
+        currentOrientation = VERTICAL;
+    } else {
+        currentOrientation = HORIZONTAL;
     }
 }

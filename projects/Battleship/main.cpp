@@ -2,16 +2,21 @@
 #include "Globals.h"
 #include "Board.h"
 #include "Game.h"
+#include <iostream>
+#include <ctime>
 
 int main()
 {
+    // Seed the random number generator so the AI behaves differently every game
+    srand(time(NULL));
+
     InitWindow(1000, 1000, "Battleship");
 
     SetTargetFPS(60);
 
     // Create board
     Game myGame;
-
+    
     while (!WindowShouldClose())
     {
         // Mouse input logic
@@ -21,7 +26,6 @@ int main()
             int mouseX = GetMouseX();
             int mouseY = GetMouseY();
 
-            // 1. BOUNDS CHECK: Ensure the click was actually inside the 900x900 playing grid
             // We don't want to register clicks in the 50px border!
             if (mouseX >= offset && mouseX < boardEnd &&
                 mouseY >= offset && mouseY < boardEnd)
@@ -32,9 +36,20 @@ int main()
                 int col = (mouseX - offset) / cellSize;
                 int row = (mouseY - offset) / cellSize;
 
+                // DEBUG
+                std::cout << "Attempting to place ship at Row: " << row << ", Col: " << col << "\n";
+                std::cout << "Current state: " << myGame.state << "\n";
+
+
                 // 3. SEND ATTACK:
                 myGame.handleInput(row, col);
             }
+        }
+
+        // Check for right-click to rotate ships
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        {
+            myGame.rotateShip();
         }
 
         myGame.update();
