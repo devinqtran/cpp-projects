@@ -10,7 +10,7 @@ add_executable(BattleshipServer
     src/GameSession.cpp
     src/GameRoom.cpp
     src/BattleshipServer.cpp
-    # src/ServerGame.cpp  # Uncomment when Phase 3c is added
+    src/ServerGame.cpp
 )
 
 # ── Include paths ─────────────────────────────────────────────────────────────
@@ -35,3 +35,8 @@ target_link_libraries(BattleshipServer PRIVATE Boost::system)
 # On Linux/macOS, Asio also needs pthreads
 find_package(Threads REQUIRED)
 target_link_libraries(BattleshipServer PRIVATE Threads::Threads)
+
+# ── Windows Sockets (Required for Boost.Asio on Windows) ──────────────────────
+if(WIN32)
+    target_link_libraries(BattleshipServer PRIVATE ws2_32 mswsock)
+endif()

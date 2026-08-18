@@ -4,6 +4,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include "ServerGame.h"
 
 // Forward declaration
 class GameSession;
@@ -18,4 +19,6 @@ private:
 
     std::shared_ptr<GameSession> player1_; // create a shared ptr to a GameSession named player1_
     std::shared_ptr<GameSession> player2_; // create a shared ptr to a GameSession named player2_
+
+    ServerGame game_; // game logic authority
 };

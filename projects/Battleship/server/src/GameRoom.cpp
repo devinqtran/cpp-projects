@@ -23,39 +23,49 @@ void GameRoom::add_player(std::shared_ptr<GameSession> player) {
 
 // Function to check who is sending the message and deciding where to send it to
 void GameRoom::handle_message(const std::string& raw_data, std::shared_ptr<GameSession> sender) {
-    // 1. Parse the incoming string into a C++ struct
     Protocol::Message msg = Protocol::parse(raw_data);
+    auto opponent = (sender == player1_) ? player2_ : player1_; // opponent either player1/player2 based on the sender of the message
     
-    // 2. Figure out who the opponent is
-    auto opponent = (sender == player1_) ? player2_ : player1_;
+    // Identify which integer ID this player is
+    int player_id = (sender == player1_) ? 0 : 1;
 
-    // 3. Decide what to do based on the command
+    // Switch statement to execute the right message based on the command type
     switch (msg.type) {
-        case Protocol::CommandType::PLACE:
-            std::cout << "[ROOM] Player placed a ship at row " << msg.row << ", col " << msg.col << "\n";
-            // TODO: Pass this to ServerGame to store the board state
-            break;
-
-        case Protocol::CommandType::ATTACK:
-            std::cout << "[ROOM] Player attacked row " << msg.row << ", col " << msg.col << "\n";
+        case Protocol::CommandType::PLACE: {
+            bool success = game_.place_ship(player_id, msg.row, msg.col, msg.orientation);
             
-            // TODO: Ask ServerGame if it's a hit or miss. 
-            // For right now, let's just pretend everything is a MISS.
-            if (opponent) {
-                // Build the result message
-                std::string result_msg = Protocol::buildResult(msg.row, msg.col, "MISS");
+            if (success) {
+                std::cout << "[ROOM] Player " << player_id << " placed a ship.\n";
                 
-                // Send the result to BOTH players so their screens update
-                sender->deliver(result_msg);
-                opponent->deliver(result_msg);
-                
-                // Tell the opponent it's now their turn
+                // If both players have finished placing all 5 ships, start the game!
+                if (game_.is_ready(0) && game_.is_ready(1)) {
+                    std::cout << "[ROOM] Both players ready. Game starting.\n";
+                    broadcast("MATCHED\n");
+                    player1_->deliver("YOURTURN\n"); // Player 1 goes first
+                }
+            }
+            break;
+        }
+
+        case Protocol::CommandType::ATTACK: {
+            // Ask the ServerGame logic what happened
+            std::string status = game_.process_attack(player_id, msg.row, msg.col);
+            
+            // Tell BOTH players the result of the shot
+            std::string result_msg = Protocol::buildResult(msg.row, msg.col, status);
+            broadcast(result_msg);
+
+            // Handle game over or next turn
+            if (status == "WIN") {
+                sender->deliver(Protocol::buildGameOver("WIN"));
+                if (opponent) opponent->deliver(Protocol::buildGameOver("LOSE"));
+            } else if (opponent) {
                 opponent->deliver("YOURTURN\n");
             }
             break;
+        }
 
         default:
-            std::cout << "[ROOM] Received unknown or unhandled command.\n";
             break;
     }
 }
