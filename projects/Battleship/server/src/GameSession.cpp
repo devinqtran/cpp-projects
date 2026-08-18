@@ -30,15 +30,28 @@ void GameSession::do_read() {
     socket_.async_read_some(boost::asio::buffer(data_, max_length),
         [this, self](boost::system::error_code ec, std::size_t length) {
             if (!ec) {
-                std::string message(data_, length);
-                
-                if (auto room = room_.lock()) {
-                    room->route_message(message, self);
+                // 1. Append the newly arrived bytes to our string buffer
+                read_buffer_.append(data_, length);
+
+                // 2. Loop through the buffer looking for newlines ('\n')
+                size_t pos;
+                while ((pos = read_buffer_.find('\n')) != std::string::npos) {
+                    // Extract the complete line
+                    std::string line = read_buffer_.substr(0, pos);
+                    
+                    // Remove the line AND the newline character from the buffer
+                    read_buffer_.erase(0, pos + 1);
+
+                    // Pass the complete line to the GameRoom
+                    if (auto room = room_.lock()) {
+                        room->handle_message(line, self); // Note: We renamed route_message to handle_message
+                    }
                 }
                 
+                // 3. Keep reading
                 do_read();
             } else {
-                std::cerr << "Player disconnected: " << ec.message() << "\n";
+                 std::cerr << "Player disconnected: " << ec.message() << "\n";
             }
         });
 }

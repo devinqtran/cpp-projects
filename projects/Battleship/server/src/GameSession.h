@@ -34,4 +34,7 @@ private:
 
     // Message queue to solve data race issue
     std::deque<std::string> write_msgs_;
+
+    // std::string buffer for holding the incoming chunks of text from TCP stream
+    std::string read_buffer_;
 };

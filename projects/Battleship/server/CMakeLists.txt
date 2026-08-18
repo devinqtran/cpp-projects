@@ -10,7 +10,7 @@ add_executable(BattleshipServer
     src/GameSession.cpp
     src/GameRoom.cpp
     src/BattleshipServer.cpp
-    src/ServerGame.cpp
+    # src/ServerGame.cpp  # Uncomment when Phase 3c is added
 )
 
 # ── Include paths ─────────────────────────────────────────────────────────────

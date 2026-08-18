@@ -11,7 +11,7 @@ class GameSession;
 class GameRoom : public std::enable_shared_from_this<GameRoom> {
 public:
     void add_player(std::shared_ptr<GameSession> player);
-    void route_message(const std::string& message, std::shared_ptr<GameSession> sender);
+    void handle_message(const std::string& message, std::shared_ptr<GameSession> sender);
 
 private:
     void broadcast(const std::string& message);
