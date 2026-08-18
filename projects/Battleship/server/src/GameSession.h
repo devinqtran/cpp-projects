@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <memory>
 #include <string>
+#include <deque>
 
 class GameRoom; // Forward declaration
 
@@ -16,13 +17,21 @@ public:
 
     void start();
     void set_room(std::shared_ptr<GameRoom> room);
+
+    // public method called by GameRoom for delivering messages
     void deliver(const std::string& msg);
 
 private:
     void do_read();
 
+    // private method to process messages in the queue
+    void do_write();
+
     tcp::socket socket_;
     std::weak_ptr<GameRoom> room_; // Weak ptr prevents memory leaks
     enum { max_length = 1024 };
     char data_[max_length];
+
+    // Message queue to solve data race issue
+    std::deque<std::string> write_msgs_;
 };
