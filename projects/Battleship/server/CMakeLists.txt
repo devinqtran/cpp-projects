@@ -7,10 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ── Source files ──────────────────────────────────────────────────────────────
 add_executable(BattleshipServer
     src/main.cpp
-    # src/GameSession.cpp     # Uncomment as you split out each class (Phase 3a)
-    # src/GameRoom.cpp
-    # src/BattleshipServer.cpp
-    # src/ServerGame.cpp
+    src/GameSession.cpp
+    src/GameRoom.cpp
+    src/BattleshipServer.cpp
+    src/ServerGame.cpp
 )
 
 # ── Include paths ─────────────────────────────────────────────────────────────
