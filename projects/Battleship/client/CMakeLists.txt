@@ -12,7 +12,7 @@ add_executable(BattleshipClient
     src/Ship.cpp
     src/Player.cpp
     src/Globals.cpp
-    # src/NetworkClient.cpp   # Uncomment when Phase 4 networking is added
+    src/NetworkClient.cpp
 )
 
 # ── Include paths ─────────────────────────────────────────────────────────────
@@ -47,3 +47,16 @@ add_custom_command(TARGET BattleshipClient POST_BUILD
         "$<TARGET_FILE_DIR:BattleshipClient>/sounds"
     COMMENT "Copying sound assets"
 )
+
+# ── Boost.Asio ────────────────────────────────────────────────────────────────
+find_package(Boost CONFIG REQUIRED COMPONENTS system)
+target_link_libraries(BattleshipClient PRIVATE Boost::system)
+
+# On Linux/macOS, Asio also needs pthreads
+find_package(Threads REQUIRED)
+target_link_libraries(BattleshipClient PRIVATE Threads::Threads)
+
+# ── Windows Sockets ───────────────────────────────────────────────────────────
+if(WIN32)
+    target_link_libraries(BattleshipClient PRIVATE ws2_32 mswsock)
+endif()

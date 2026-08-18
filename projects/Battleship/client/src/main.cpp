@@ -3,136 +3,91 @@
 #include "Board.h"
 #include "Game.h"
 #include <iostream>
-#include <ctime>
-
-// Pass game object by reference
-void drawBoard(Game &myGame)
-{
-    bool isPlacingShips = (myGame.state == 0);
-
-    // Draw border
-    DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellSize * gridCount + 10, (float)cellSize * gridCount + 10}, 5, navy);
-
-    // Draw grid
-    for (int i = 0; i <= gridCount; i++)
-    {
-        int linePos = offset + (i * cellSize);
-
-        // Vertical x change
-        DrawLine(linePos, offset, linePos, boardEnd, navy);
-
-        // Horizontal lines (start at X=offset, go right to X=boardEnd)
-        DrawLine(offset, linePos, boardEnd, linePos, navy);
-    }
-
-    // Loop for checking cell state
-    for (int row = 0; row < 10; row++)
-    {
-        for (int col = 0; col < 10; col++)
-        {
-            // Find the top-left corner of the current cell for drawing
-            int cellX = offset + (col * cellSize);
-            int cellY = offset + (row * cellSize);
-
-            // Find the center of the cell for drawing circles (pegs)
-            int centerX = cellX + (cellSize / 2);
-            int centerY = cellY + (cellSize / 2);
-
-            // 3. Choose which board to read from based on the game state
-            CellState state;
-            if (isPlacingShips)
-            {
-                state = myGame.human.board.getCellState(row, col);
-            }
-            else
-            {
-                state = myGame.enemy.board.getCellState(row, col);
-            }
-
-            // 4. Draw the cell based on the state
-            if (state == SHIP)
-            {
-                // Only draw the gray rectangle if we are looking at the player's board
-                // This keeps the enemy board "blank" by hiding un-hit ships
-                if (isPlacingShips)
-                {
-                    DrawRectangle(cellX + 2, cellY + 2, cellSize - 4, cellSize - 4, GRAY);
-                }
-            }
-            else if (state == HIT)
-            {
-                // Draw a red peg
-                DrawCircle(centerX, centerY, cellSize / 3, RED);
-            }
-            else if (state == MISS)
-            {
-                // Draw a white peg
-                DrawCircle(centerX, centerY, cellSize / 3, WHITE);
-            }
-        }
-    }
-}
+#include <string>
 
 int main()
 {
-    // Seed the random number generator so the AI behaves differently every game
-    srand(time(NULL));
-
-    InitWindow(1200, 1000, "Battleship");
-
+    // Initialize the window
+    InitWindow(1200, 700, "Battleship - Multiplayer");
     SetTargetFPS(60);
 
-    // Create board
+    // Create our game manager (this automatically connects to the server!)
     Game myGame;
+
+    // Define where our two boards will sit on the screen
+    const int LEFT_BOARD_X = 50;
+    const int RIGHT_BOARD_X = 650;
+    const int BOARD_Y = 150;
+    const int BOARD_PIXEL_SIZE = Board::CELL_SIZE * 10;
 
     while (!WindowShouldClose())
     {
-        // Mouse input logic
-        // Check if the Left Mouse Button was clicked this frame
+        // 1. UPDATE NETWORK & GAME STATE
+        myGame.update();
+
+        // 2. HANDLE MOUSE CLICKS
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             int mouseX = GetMouseX();
             int mouseY = GetMouseY();
+            
+            int activeOffsetX = -1;
 
-            // We don't want to register clicks in the 50px border!
-            if (mouseX >= offset && mouseX < boardEnd &&
-                mouseY >= offset && mouseY < boardEnd)
-            {
+            // Figure out WHICH board they should be clicking based on the game state
+            if (myGame.state == GameState::PLACEMENT) {
+                activeOffsetX = LEFT_BOARD_X; // Place ships on YOUR board
+            } 
+            else if (myGame.state == GameState::PLAYER_TURN) {
+                activeOffsetX = RIGHT_BOARD_X; // Attack the ENEMY board
+            }
 
-                // 2. CONVERT PIXELS TO GRID:
-                // Subtract the border offset, then divide by the size of the cells
-                int col = (mouseX - offset) / cellSize;
-                int row = (mouseY - offset) / cellSize;
+            // If it's a valid time to click, check if they clicked inside the active board
+            if (activeOffsetX != -1) {
+                if (mouseX >= activeOffsetX && mouseX < (activeOffsetX + BOARD_PIXEL_SIZE) &&
+                    mouseY >= BOARD_Y && mouseY < (BOARD_Y + BOARD_PIXEL_SIZE))
+                {
+                    // Convert pixels to row/col grid coordinates
+                    int col = (mouseX - activeOffsetX) / Board::CELL_SIZE;
+                    int row = (mouseY - BOARD_Y) / Board::CELL_SIZE;
 
-                // DEBUG
-                std::cout << "Attempting to place ship at Row: " << row << ", Col: " << col << "\n";
-                std::cout << "Current state: " << myGame.state << "\n";
-
-                // 3. SEND ATTACK:
-                myGame.handleInput(row, col);
+                    myGame.handleInput(row, col);
+                }
             }
         }
 
-        // Check for right-click to rotate ships
-        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        // Check for right-click to rotate ships during placement
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && myGame.state == GameState::PLACEMENT)
         {
             myGame.rotateShip();
         }
 
-        myGame.update();
-
+        // 3. DRAWING
         BeginDrawing();
-        ClearBackground(water);
+        ClearBackground({ 240, 245, 250, 255 }); // Very light blue/gray background
 
-        GameState currentState = myGame.state;
+        // Draw Title & Network Status
+        DrawText("MULTIPLAYER BATTLESHIP", 50, 30, 40, DARKBLUE);
+        DrawText(myGame.gameStatusText.c_str(), 50, 80, 25, RED);
 
-        DrawText("Battleship", 15, 15, 25, navy);
-        DrawText("Phase: ", 955, 15, 25, navy);
-        DrawText(GameStateStrings[myGame.state], 1045, 15, 25, navy);
-        drawBoard(myGame);
+        // Draw Player Board (Left)
+        DrawText("YOUR FLEET", LEFT_BOARD_X, BOARD_Y - 30, 20, DARKGRAY);
+        myGame.human.board.draw(LEFT_BOARD_X, BOARD_Y, false); // false = show ships
+
+        // Draw Enemy Board (Right)
+        DrawText("ENEMY FLEET", RIGHT_BOARD_X, BOARD_Y - 30, 20, DARKGRAY);
+        myGame.enemy.board.draw(RIGHT_BOARD_X, BOARD_Y, true); // true = hide ships!
+
+        // Draw Placement Helpers
+        if (myGame.state == GameState::PLACEMENT && myGame.currentShipIndex < myGame.shipsToPlace.size()) {
+            std::string lengthStr = std::to_string(myGame.shipsToPlace[myGame.currentShipIndex]);
+            std::string dirStr = (myGame.currentOrientation == HORIZONTAL) ? "HORIZONTAL" : "VERTICAL";            
+            DrawText(("Placing Ship Size: " + lengthStr).c_str(), LEFT_BOARD_X, BOARD_Y + BOARD_PIXEL_SIZE + 20, 20, DARKGRAY);
+            DrawText(("Orientation: " + dirStr + " (Right-Click to rotate)").c_str(), LEFT_BOARD_X, BOARD_Y + BOARD_PIXEL_SIZE + 50, 20, GRAY);
+        }
 
         EndDrawing();
     }
+
     CloseWindow();
     return 0;
 }
