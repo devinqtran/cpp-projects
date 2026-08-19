@@ -16,7 +16,6 @@ namespace Protocol
         ATTACK,    // Client -> Server: "I am shooting at Row, Col"
         CONFIRM,   // Server -> Attacker: "Your shot was a HIT/MISS"
         ENEMY_HIT, // Server -> Defender: "The enemy shot you here"
-        MISS,
         YOURTURN,  // Server -> Client: "It is your turn to attack"
         GAMEOVER   // Server -> Client: "The game is over, you WIN/LOSE"
     };
@@ -70,11 +69,6 @@ namespace Protocol
         else if (command == "ENEMY_HIT")
         {
             msg.type = CommandType::ENEMY_HIT;
-            iss >> msg.row >> msg.col >> msg.status;
-        }
-        else if (command == "MISS")
-        {
-            msg.type = CommandType::MISS;
             iss >> msg.row >> msg.col >> msg.status;
         }
         else if (command == "YOURTURN")

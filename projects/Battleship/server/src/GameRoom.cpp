@@ -53,33 +53,26 @@ void GameRoom::handle_message(const std::string &raw_data, std::shared_ptr<GameS
         break;
     }
 
-    case Protocol::CommandType::ATTACK:
-    {
+    case Protocol::CommandType::ATTACK: {
         std::string status = game_.process_attack(player_id, msg.row, msg.col);
-
-        // 1. Tell the attacker exactly what their shot did
+        
+        // 1. Tell the attacker what their shot did
         std::string confirm_msg = "CONFIRM " + std::to_string(msg.row) + " " + std::to_string(msg.col) + " " + status + "\n";
         sender->deliver(confirm_msg);
 
-        std::string miss_msg = "MISS " + std::to_string(msg.row) + " " + std::to_string(msg.col) + " " + status + "\n";
-        sender->deliver(miss_msg);
-
-        // 2. Tell the opponent exactly where they got hit
-        if (opponent)
-        {
+        // 2. Tell the opponent where they got hit
+        if (opponent) {
             std::string hit_msg = "ENEMY_HIT " + std::to_string(msg.row) + " " + std::to_string(msg.col) + " " + status + "\n";
             opponent->deliver(hit_msg);
         }
 
-        // Handle game over or pass the turn
-        if (status == "WIN")
-        {
+        // 3. Handle game over or conditionally pass the turn
+        if (status == "WIN") {
             sender->deliver(Protocol::buildGameOver("WIN"));
-            if (opponent)
-                opponent->deliver(Protocol::buildGameOver("LOSE"));
-        }
-        else if (opponent)
-        {
+            if (opponent) opponent->deliver(Protocol::buildGameOver("LOSE"));
+        } 
+        // 🚨 THE FIX: Only send YOURTURN if the attacker missed!
+        else if (status == "MISS" && opponent) {
             opponent->deliver("YOURTURN\n");
         }
         break;

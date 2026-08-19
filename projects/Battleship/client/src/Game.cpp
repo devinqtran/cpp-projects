@@ -63,22 +63,31 @@ void Game::handleNetworkMessage(const Protocol::Message &msg)
         break;
 
     case Protocol::CommandType::CONFIRM:
-        // The server is confirming our attack on the enemy
+        // This is OUR shot at the enemy
         enemy.board.markCell(msg.row, msg.col, msg.status);
-        state = GameState::PLAYER_TURN;
-        gameStatusText = "Nice shot! Your turn again!";
+        
+        // Check the status to decide who goes next
+        if (msg.status == "HIT") {
+            state = GameState::PLAYER_TURN;
+            gameStatusText = "Nice shot! Your turn again!";
+        } else {
+            state = GameState::ENEMY_TURN;
+            gameStatusText = "Miss! Opponent's turn...";
+        }
         break;
 
     case Protocol::CommandType::ENEMY_HIT:
-        // The server is telling us the enemy shot our board
+        // This is the ENEMY'S shot at us
         human.board.markCell(msg.row, msg.col, msg.status);
-        break;
-
-    case Protocol::CommandType::MISS:
-        // The server is telling us the enemy shot our board
-        human.board.markCell(msg.row, msg.col, msg.status);
-        state = GameState::ENEMY_TURN;
-        gameStatusText = "Opponent's turn...";
+        
+        // If they hit us, they get to go again. If they miss, it's our turn!
+        if (msg.status == "HIT") {
+            state = GameState::ENEMY_TURN;
+            gameStatusText = "You were hit! Opponent fires again!";
+        } else {
+            state = GameState::PLAYER_TURN;
+            gameStatusText = "Opponent missed! Your turn!";
+        }
         break;
 
     case Protocol::CommandType::GAMEOVER:
