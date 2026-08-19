@@ -17,7 +17,9 @@ namespace Protocol
         CONFIRM,   // Server -> Attacker: "Your shot was a HIT/MISS"
         ENEMY_HIT, // Server -> Defender: "The enemy shot you here"
         YOURTURN,  // Server -> Client: "It is your turn to attack"
-        GAMEOVER   // Server -> Client: "The game is over, you WIN/LOSE"
+        GAMEOVER,   // Server -> Client: "The game is over, you WIN/LOSE"
+        RESTART, // Client -> Server: "I want to play again!"
+        RESET    // Server -> Client: "Wipe your boards, we are starting over!"
     };
 
     // 2. A struct to hold the parsed data so C++ can easily read it
@@ -80,6 +82,8 @@ namespace Protocol
             msg.type = CommandType::GAMEOVER;
             iss >> msg.status;
         }
+        else if (command == "RESTART") msg.type = CommandType::RESTART;
+        else if (command == "RESET") msg.type = CommandType::RESET;
 
         return msg;
     }
@@ -105,6 +109,9 @@ namespace Protocol
     inline std::string buildGameOver(const std::string &status)
     {
         return "GAMEOVER " + status + "\n";
+    }
+    inline std::string buildRestart() {
+        return "RESTART\n";
     }
 
 } // namespace Protocol

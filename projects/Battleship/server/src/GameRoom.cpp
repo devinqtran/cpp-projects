@@ -53,28 +53,43 @@ void GameRoom::handle_message(const std::string &raw_data, std::shared_ptr<GameS
         break;
     }
 
-    case Protocol::CommandType::ATTACK: {
+    case Protocol::CommandType::ATTACK:
+    {
         std::string status = game_.process_attack(player_id, msg.row, msg.col);
-        
+
         // 1. Tell the attacker what their shot did
         std::string confirm_msg = "CONFIRM " + std::to_string(msg.row) + " " + std::to_string(msg.col) + " " + status + "\n";
         sender->deliver(confirm_msg);
 
         // 2. Tell the opponent where they got hit
-        if (opponent) {
+        if (opponent)
+        {
             std::string hit_msg = "ENEMY_HIT " + std::to_string(msg.row) + " " + std::to_string(msg.col) + " " + status + "\n";
             opponent->deliver(hit_msg);
         }
 
         // 3. Handle game over or conditionally pass the turn
-        if (status == "WIN") {
+        if (status == "WIN")
+        {
             sender->deliver(Protocol::buildGameOver("WIN"));
-            if (opponent) opponent->deliver(Protocol::buildGameOver("LOSE"));
-        } 
-        // 🚨 THE FIX: Only send YOURTURN if the attacker missed!
-        else if (status == "MISS" && opponent) {
+            if (opponent)
+                opponent->deliver(Protocol::buildGameOver("LOSE"));
+        }
+        // Only send YOURTURN if the attacker missed!
+        else if (status == "MISS" && opponent)
+        {
             opponent->deliver("YOURTURN\n");
         }
+        break;
+    }
+
+    case Protocol::CommandType::RESTART:
+    {
+        // Wipe the server's internal game memory completely clean
+        game_.reset(); 
+        
+        // Tell both clients to wipe their screens and start over
+        broadcast("RESET\n");
         break;
     }
 

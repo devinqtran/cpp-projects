@@ -19,6 +19,8 @@ public:
     // Checks if a player has placed all 5 ships
     bool is_ready(int player_id) const;
 
+    void reset();
+
 private:
     static const int BOARD_SIZE = 10;
     static const int MAX_SHIPS = 5;

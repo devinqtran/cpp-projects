@@ -61,6 +61,13 @@ int main()
             myGame.rotateShip();
         }
 
+        // Check for Restart
+        if (myGame.state == GameState::GAME_OVER) {
+            if (IsKeyPressed(KEY_ENTER)) {
+                myGame.network.send(Protocol::buildRestart());
+            }
+        }
+
         // 3. DRAWING
         BeginDrawing();
         ClearBackground({ 240, 245, 250, 255 }); // Very light blue/gray background
@@ -83,6 +90,11 @@ int main()
             std::string dirStr = (myGame.currentOrientation == HORIZONTAL) ? "HORIZONTAL" : "VERTICAL";            
             DrawText(("Placing Ship Size: " + lengthStr).c_str(), LEFT_BOARD_X, BOARD_Y + BOARD_PIXEL_SIZE + 20, 20, DARKGRAY);
             DrawText(("Orientation: " + dirStr + " (Right-Click to rotate)").c_str(), LEFT_BOARD_X, BOARD_Y + BOARD_PIXEL_SIZE + 50, 20, GRAY);
+        }
+
+        // Draw Game Over instructions
+        if (myGame.state == GameState::GAME_OVER) {
+            DrawText("Press ENTER to Play Again!", LEFT_BOARD_X + 250, BOARD_Y + BOARD_PIXEL_SIZE + 40, 30, DARKGREEN);
         }
 
         EndDrawing();

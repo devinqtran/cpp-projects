@@ -7,8 +7,6 @@
 
 class Game {
 private:
-    NetworkClient network; // The background network engine
-    
     // Helper to process incoming messages from the server
     void handleNetworkMessage(const Protocol::Message& msg); 
 
@@ -16,6 +14,7 @@ public:
     Player human;
     Player enemy;
     GameState state;
+    NetworkClient network; // The background network engine
 
     std::string gameStatusText; // Used to show messages like "Waiting for opponent..."
 

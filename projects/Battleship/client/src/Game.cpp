@@ -102,6 +102,17 @@ void Game::handleNetworkMessage(const Protocol::Message &msg)
         }
         break;
 
+    case Protocol::CommandType::RESET:
+        // Wipe both local boards clean
+        human.board = Board();
+        enemy.board = Board();
+        
+        // Reset ship placement progress
+        currentShipIndex = 0;
+        state = GameState::PLACEMENT;
+        gameStatusText = "Game Reset! Place your ships.";
+        break;
+
     default:
         break;
     }
