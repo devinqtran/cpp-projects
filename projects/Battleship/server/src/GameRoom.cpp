@@ -55,14 +55,23 @@ void GameRoom::handle_message(const std::string &raw_data, std::shared_ptr<GameS
 
     case Protocol::CommandType::ATTACK:
     {
-        // Ask the ServerGame logic what happened
         std::string status = game_.process_attack(player_id, msg.row, msg.col);
 
-        // Tell BOTH players the result of the shot
-        std::string result_msg = Protocol::buildResult(msg.row, msg.col, status);
-        broadcast(result_msg);
+        // 1. Tell the attacker exactly what their shot did
+        std::string confirm_msg = "CONFIRM " + std::to_string(msg.row) + " " + std::to_string(msg.col) + " " + status + "\n";
+        sender->deliver(confirm_msg);
 
-        // Handle game over or next turn
+        std::string miss_msg = "MISS " + std::to_string(msg.row) + " " + std::to_string(msg.col) + " " + status + "\n";
+        sender->deliver(miss_msg);
+
+        // 2. Tell the opponent exactly where they got hit
+        if (opponent)
+        {
+            std::string hit_msg = "ENEMY_HIT " + std::to_string(msg.row) + " " + std::to_string(msg.col) + " " + status + "\n";
+            opponent->deliver(hit_msg);
+        }
+
+        // Handle game over or pass the turn
         if (status == "WIN")
         {
             sender->deliver(Protocol::buildGameOver("WIN"));
