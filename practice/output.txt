@@ -1,0 +1,3 @@
+This is the input file.
+These are the contents.
+This is the end of the file.
