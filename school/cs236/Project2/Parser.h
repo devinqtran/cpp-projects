@@ -26,13 +26,6 @@ public:
         std::cout << "error" << std::endl;
     }
 
-    /*
-        if the current token type matches t
-            advance to the next token
-        else
-            report a syntax error
-    */
-
     // match function called when parsing a terminal symbol
     void match(TokenType t) {
         cout << "match: " << t << endl;
@@ -44,4 +37,27 @@ public:
             throwError();
         }
     }
+
+    // idList -> COMMA ID idList | lambda
+    void idList() {
+        if (tokenType() == COMMA) {
+            match(COMMA);
+            match(ID);
+            idList();
+        } else {
+            // lambda
+        }
+    }
+
+    // scheme -> ID LEFT_PAREN ID idList RIGHT_PAREN
+    void scheme() {
+        if (tokenType() == ID) {
+            match(ID);
+            match(LEFT_PAREN);
+            match(ID);
+            idList();
+            match(RIGHT_PAREN);
+        }
+    }
+
 };

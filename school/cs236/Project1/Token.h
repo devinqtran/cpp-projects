@@ -6,24 +6,24 @@ using namespace std;
 
 enum TokenType
 {
-    COMMA,
-    PERIOD,
-    Q_MARK,
-    LEFT_PAREN,
-    RIGHT_PAREN,
-    COLON,
-    COLON_DASH,
-    MULTIPLY,
-    ADD,
-    SCHEMES,
-    FACTS,
-    RULES,
-    QUERIES,
-    ID,
-    STRING,
-    COMMENT,
-    UNDEFINED,
-    END,
+    COMMA,          // 0
+    PERIOD,         // 1
+    Q_MARK,         // 2
+    LEFT_PAREN,     // 3
+    RIGHT_PAREN,    // 4
+    COLON,          // 5
+    COLON_DASH,     // 6
+    MULTIPLY,       // 7
+    ADD,            // 8
+    SCHEMES,        // 9
+    FACTS,          // 10
+    RULES,          // 11
+    QUERIES,        // 12
+    ID,             // 13
+    STRING,         // 14
+    COMMENT,        // 15
+    UNDEFINED,      // 16
+    END,            // 17
 };
 
 class Token
