@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Token.h"
 #include "Scanner.h"
+#include "Parser.h"
 #include <fstream>
 
 // argv[1] == filepath passed on cmd line
