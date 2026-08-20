@@ -83,14 +83,21 @@ public:
     // scheme -> ID LEFT_PAREN ID idList RIGHT_PAREN
     void scheme()
     {
-        if (tokenType() == ID)
-        {
-            match(ID);
-            match(LEFT_PAREN);
-            match(ID);
-            idList();
-            match(RIGHT_PAREN);
-        }
+        match(ID);
+        match(LEFT_PAREN);
+        match(ID);
+        idList();
+        match(RIGHT_PAREN);
+    }
+
+    // fact -> ID LEFT_PAREN STRING stringList RIGHT_PAREN PERIOD
+    void fact() {
+        match(ID);
+        match(LEFT_PAREN);
+        match(STRING);
+        // stringList();
+        match(RIGHT_PAREN);
+        match(PERIOD);
     }
 
     /*
