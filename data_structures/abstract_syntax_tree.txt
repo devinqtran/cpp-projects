@@ -1,0 +1,49 @@
+DatalogProgram (Root Node)
+│
+├── Schemes (std::vector<Predicate>)
+│   ├── Predicate (Name: "snap")
+│   │   ├── Parameter (Value: "S")
+│   │   ├── Parameter (Value: "N")
+│   │   ├── Parameter (Value: "A")
+│   │   └── Parameter (Value: "P")
+│   │
+│   └── Predicate (Name: "HasSameAddress")
+│       ├── Parameter (Value: "X")
+│       └── Parameter (Value: "Y")
+│
+├── Facts (std::vector<Predicate>)
+│   ├── Predicate (Name: "snap")
+│   │   ├── Parameter (Value: "'12345'")
+│   │   ├── Parameter (Value: "'C. Brown'")
+│   │   ├── Parameter (Value: "'12 Apple'")
+│   │   └── Parameter (Value: "'555-1234'")
+│   │
+│   └── Predicate (Name: "snap")
+│       ├── Parameter (Value: "'33333'")
+│       ├── Parameter (Value: "'Snoopy'")
+│       ├── Parameter (Value: "'12 Apple'")
+│       └── Parameter (Value: "'555-1234'")
+│
+├── Rules (std::vector<Rule>)
+│   └── Rule
+│       ├── Head: Predicate (Name: "HasSameAddress")
+│       │   ├── Parameter (Value: "X")
+│       │   └── Parameter (Value: "Y")
+│       │
+│       └── Body: (std::vector<Predicate>)
+│           ├── Predicate (Name: "snap")
+│           │   ├── Parameter (Value: "A")
+│           │   ├── Parameter (Value: "X")
+│           │   ├── Parameter (Value: "B")
+│           │   └── Parameter (Value: "C")
+│           │
+│           └── Predicate (Name: "snap")
+│               ├── Parameter (Value: "D")
+│               ├── Parameter (Value: "Y")
+│               ├── Parameter (Value: "B")
+│               └── Parameter (Value: "E")
+│
+└── Queries (std::vector<Predicate>)
+    └── Predicate (Name: "HasSameAddress")
+        ├── Parameter (Value: "'Snoopy'")
+        └── Parameter (Value: "Who")
