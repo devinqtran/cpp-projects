@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vector>
-
+#include <string>
+#include "Parameter.h"
+#include "Predicate.h"
+#include "Rule.h"
+#include "DatalogProgram.h"
 #include "..//Project1//Token.h"
 
 class Parser
@@ -16,10 +20,9 @@ public:
     void parse() {
         try {
             // parse top-level grammar rule
-            datalogProgram();
-
-            // print success if it worked without exceptions
-            std::cout << "Success!" << "\n";
+            DatalogProgram program = datalogProgram();
+            std::cout << "Success!\n";
+            std::cout << program.toString(); // this prints the full AST
         }    
         catch (const Token& errorToken) {
             // catch the thrown error token and report error
@@ -50,10 +53,9 @@ public:
     // match function called when parsing a terminal symbol
     void match(TokenType t)
     {
-        cout << "match: " << t << endl;
-
         if (tokenType() == t)
         {
+            // cout << "match: " << t << endl;
             advanceToken();
         }
         else
@@ -65,137 +67,152 @@ public:
     // ----- schemeList, factList, ruleList, queryList -----
 
     // schemeList -> scheme schemeList | lambda
-    void schemeList() {
-        if (tokenType() == ID) { // check for ID because first token of a scheme is an ID
-            scheme();
-            schemeList();
-        } else {
-            // lambda
+    void schemeList(DatalogProgram& program) {
+        if (tokenType() == ID) { 
+            program.addScheme(scheme());
+            schemeList(program);
         }
     }
 
     // factList	-> fact factList | lambda
-    void factList() {
+    void factList(DatalogProgram& program) {
         if (tokenType() == ID) {
-            fact();
-            factList();
-        } else {
-            // lambda
+            program.addFact(fact());
+            factList(program);
         }
     }
     
     // ruleList -> rule ruleList | lambda
-    void ruleList() {
-        if (tokenType() == ID) { // first token of a rule is a headPredicate, first token of a headPredicate is an ID
-            rule();
-            ruleList();
-        } else {
-            // lambda
+    void ruleList(DatalogProgram& program) {
+        if (tokenType() == ID) {
+            program.addRule(rule());
+            ruleList(program);
         }
     }
     
     // queryList ->	query queryList | lambda
-    void queryList() {
+    void queryList(DatalogProgram& program) {
         if (tokenType() == ID) {
-            query();
-            queryList();
-        } else {
-            // lambda
+            program.addQuery(query());
+            queryList(program);
         }
     }
 
     // ----- idList, stringList, parameterList, predicateList -----
 
     // idList -> COMMA ID idList | lambda
-    void idList()
-    {
-        if (tokenType() == COMMA)
-        {
+    void idList(Predicate& currentPredicate) {
+        if (tokenType() == COMMA) {
             match(COMMA);
+            
+            std::string paramValue = tokens.at(0).getValue();
             match(ID);
-            idList();
-        }
-        else
-        {
-            // lambda
+            currentPredicate.addParameter(Parameter(paramValue));
+            
+            idList(currentPredicate);
         }
     }
 
 
     // predicateList ->	COMMA predicate predicateList | lambda
-    void predicateList() {
+    void predicateList(Rule& currentRule) {
         if (tokenType() == COMMA) {
             match(COMMA);
-            // predicate();
-            // predicateList();
-        } else {
-            // lambda
+            
+            Predicate bodyPred = predicate();
+            currentRule.addBodyPredicate(bodyPred);
+            
+            predicateList(currentRule);
         }
     }
 
     // parameterList -> COMMA parameter parameterList | lambda
-    void parameterList() {
+    void parameterList(Predicate& currentPredicate) {
         if (tokenType() == COMMA) {
             match(COMMA);
-            // parameter();
-            // parameterList();
-        } else {
-            // lambda
+            currentPredicate.addParameter(parameter());
+            parameterList(currentPredicate);
         }
     }
 
     // stringList -> COMMA STRING stringList | lambda
-    void stringList() {
+    void stringList(Predicate& currentPredicate) {
         if (tokenType() == COMMA) {
             match(COMMA);
-            match(ID);
-            idList();
-        } else {
-            // lambda
+            std::string strVal = tokens.at(0).getValue();
+            match(STRING);
+            currentPredicate.addParameter(Parameter(strVal));
+            stringList(currentPredicate);
         }
     }
 
     // ----- scheme, fact, rule, query -----
 
     // scheme -> ID LEFT_PAREN ID idList RIGHT_PAREN
-    void scheme()
-    {
+    Predicate scheme() {
+        std::string name = tokens.at(0).getValue();
         match(ID);
+        Predicate myScheme(name);
+
         match(LEFT_PAREN);
+        
+        std::string firstParam = tokens.at(0).getValue();
         match(ID);
-        idList();
+        myScheme.addParameter(Parameter(firstParam));
+        
+        idList(myScheme);
+        
         match(RIGHT_PAREN);
+        return myScheme;
     }
 
+
     // fact -> ID LEFT_PAREN STRING stringList RIGHT_PAREN PERIOD
-    void fact() {
+    Predicate fact() {
+        std::string name = tokens.at(0).getValue();
         match(ID);
+        Predicate myFact(name);
+
         match(LEFT_PAREN);
+        std::string firstStr = tokens.at(0).getValue();
         match(STRING);
-        stringList();
+        myFact.addParameter(Parameter(firstStr));
+        
+        stringList(myFact);
+        
         match(RIGHT_PAREN);
         match(PERIOD);
+        return myFact;
     }
 
     // rule -> headPredicate COLON_DASH predicate predicateList PERIOD
-    void rule() {
-        // headPredicate();
+    Rule rule() {
+        Predicate head = headPredicate();
+        Rule myRule(head);
+
         match(COLON_DASH);
-        // predicate();
-        // predicateList();
+        
+        Predicate bodyPred = predicate();
+        myRule.addBodyPredicate(bodyPred);
+        
+        predicateList(myRule);
+        
         match(PERIOD);
+        return myRule;
     }
 
     // query -> predicate Q_MARK
-    void query() {
-        // predicate();
+    Predicate query() {
+        Predicate myQuery = predicate();
         match(Q_MARK);
+        return myQuery;
     }
 
     // ----- parameter, predicate, headPredicate, datalogProgram -----
 
     // paramater ->	STRING | ID
-    void parameter() {
+    Parameter parameter() {
+        string value = tokens.at(0).getValue(); // get the string value before matching and removing
         if (tokenType() == STRING) {
             match(STRING);
         } else if (tokenType() == ID) {
@@ -203,24 +220,38 @@ public:
         } else {
             throwError(); // no STRING/ID means syntax error
         }
+        return Parameter(value);
     }
 
     // predicate	->	ID LEFT_PAREN parameter parameterList RIGHT_PAREN
-    void predicate() {
+    Predicate predicate() {
+        std::string name = tokens.at(0).getValue();
         match(ID);
+        Predicate myPred(name);
+
         match(LEFT_PAREN);
-        parameter();
-        parameterList();
+        myPred.addParameter(parameter());
+        parameterList(myPred);
         match(RIGHT_PAREN);
+        
+        return myPred;
     }
 
     // headPredicate	->	ID LEFT_PAREN ID idList RIGHT_PAREN
-    void headPredicate() {
+    Predicate headPredicate() {
+        std::string name = tokens.at(0).getValue();
         match(ID);
+        Predicate head(name);
+
         match(LEFT_PAREN);
+        std::string firstParam = tokens.at(0).getValue();
         match(ID);
-        idList();
+        head.addParameter(Parameter(firstParam));
+        
+        idList(head);
         match(RIGHT_PAREN);
+        
+        return head;
     }
 
     /*
@@ -230,26 +261,30 @@ public:
                             QUERIES COLON query queryList
                             END
     */
-    void datalogProgram() {
+    DatalogProgram datalogProgram() {
+        DatalogProgram program;
+
         match(SCHEMES);
         match(COLON);
-        scheme();
-        schemeList();
+        program.addScheme(scheme()); 
+        schemeList(program);
 
         match(FACTS);
         match(COLON);
-        factList();
+        factList(program);
 
         match(RULES);
         match(COLON);
-        ruleList();
+        ruleList(program);
 
         match(QUERIES);
         match(COLON);
-        query();
-        queryList();
+        program.addQuery(query());
+        queryList(program);
 
         match(END);
+        
+        return program;
     }
 
     /*

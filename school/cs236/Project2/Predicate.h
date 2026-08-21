@@ -16,8 +16,13 @@ public:
     Predicate(string name) : name(name) {}
 
     // Method for adding a parameter to the parameters vector
-    void addParameters(Parameter p) {
+    void addParameter(Parameter p) {
         parameters.push_back(p);
+    }
+
+    // Getter method for parameters
+    const vector<Parameter>& getParameters() const {
+        return parameters;
     }
 
     // toString method for printing the values

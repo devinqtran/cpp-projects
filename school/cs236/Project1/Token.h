@@ -45,6 +45,10 @@ public:
         return out.str();
     }
 
+    string getValue() const {
+        return value;
+    }
+
     // Function to return the correct string for each 'TokenType' value so toString will print the correct string
     string typeName(TokenType type) const
     {

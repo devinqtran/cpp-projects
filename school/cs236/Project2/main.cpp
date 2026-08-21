@@ -1,23 +1,46 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include "..//Project1//Token.h"
 #include "..\\Project1\\Scanner.h"
 #include "Parser.h"
 
-int main() {
+using namespace std;
 
-  vector<Token> tokens = {
-    Token(ID,"Ned",2),
-    Token(LEFT_PAREN,"(",2),
-    Token(ID,"Ted",2),
-    Token(COMMA,",",2),
-    Token(ID,"Zed",2),
-    Token(RIGHT_PAREN,")",2),
-  };
+// C:\Users\devin\OneDrive\Desktop\cpp-projects\school\cs236\Project2\test.txt
 
-  Parser parser(tokens);
-  parser.parse();
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <filename>" << endl;
+        return 1;
+    }
+    
+    string fileName = argv[1];
 
-  return 0;
+    ifstream inputFile(fileName);
+    if (!inputFile.is_open()) {
+        cerr << "Error: Could not open file " << fileName << endl;
+        return 1;
+    }
+    
+    stringstream buffer;
+    buffer << inputFile.rdbuf();
+    string fileContents = buffer.str();
 
+    Scanner scanner(fileContents);
+
+    vector<Token> tokens; 
+    Token t = scanner.scanToken();
+    tokens.push_back(t);
+
+    while(t.getType() != END) {
+      t = scanner.scanToken();
+      tokens.push_back(t);
+    }
+
+    Parser parser(tokens);
+    parser.parse();
+
+    return 0;
 }
