@@ -15,11 +15,8 @@ public:
     // Main parse function try...catch loop 
     void parse() {
         try {
-            // TESTING REMOVE AFTER datalogProgram is finished
-            scheme();
-
             // parse top-level grammar rule
-            // datalogProgram(); // Need to implement
+            datalogProgram();
 
             // print success if it worked without exceptions
             std::cout << "Success!" << "\n";
@@ -62,6 +59,48 @@ public:
         else
         {
             throwError();
+        }
+    }
+
+    // ----- schemeList, factList, ruleList, queryList -----
+
+    // schemeList -> scheme schemeList | lambda
+    void schemeList() {
+        if (tokenType() == ID) { // check for ID because first token of a scheme is an ID
+            scheme();
+            schemeList();
+        } else {
+            // lambda
+        }
+    }
+
+    // factList	-> fact factList | lambda
+    void factList() {
+        if (tokenType() == ID) {
+            fact();
+            factList();
+        } else {
+            // lambda
+        }
+    }
+    
+    // ruleList -> rule ruleList | lambda
+    void ruleList() {
+        if (tokenType() == ID) { // first token of a rule is a headPredicate, first token of a headPredicate is an ID
+            rule();
+            ruleList();
+        } else {
+            // lambda
+        }
+    }
+    
+    // queryList ->	query queryList | lambda
+    void queryList() {
+        if (tokenType() == ID) {
+            query();
+            queryList();
+        } else {
+            // lambda
         }
     }
 
@@ -133,7 +172,7 @@ public:
         match(ID);
         match(LEFT_PAREN);
         match(STRING);
-        // stringList();
+        stringList();
         match(RIGHT_PAREN);
         match(PERIOD);
     }
@@ -151,6 +190,66 @@ public:
     void query() {
         // predicate();
         match(Q_MARK);
+    }
+
+    // ----- parameter, predicate, headPredicate, datalogProgram -----
+
+    // paramater ->	STRING | ID
+    void parameter() {
+        if (tokenType() == STRING) {
+            match(STRING);
+        } else if (tokenType() == ID) {
+            match(ID);
+        } else {
+            throwError(); // no STRING/ID means syntax error
+        }
+    }
+
+    // predicate	->	ID LEFT_PAREN parameter parameterList RIGHT_PAREN
+    void predicate() {
+        match(ID);
+        match(LEFT_PAREN);
+        parameter();
+        parameterList();
+        match(RIGHT_PAREN);
+    }
+
+    // headPredicate	->	ID LEFT_PAREN ID idList RIGHT_PAREN
+    void headPredicate() {
+        match(ID);
+        match(LEFT_PAREN);
+        match(ID);
+        idList();
+        match(RIGHT_PAREN);
+    }
+
+    /*
+        datalogProgram	->	SCHEMES COLON scheme schemeList
+                            FACTS COLON factList
+                            RULES COLON ruleList
+                            QUERIES COLON query queryList
+                            END
+    */
+    void datalogProgram() {
+        match(SCHEMES);
+        match(COLON);
+        scheme();
+        schemeList();
+
+        match(FACTS);
+        match(COLON);
+        factList();
+
+        match(RULES);
+        match(COLON);
+        ruleList();
+
+        match(QUERIES);
+        match(COLON);
+        query();
+        queryList();
+
+        match(END);
     }
 
     /*
