@@ -65,6 +65,8 @@ public:
         }
     }
 
+    // ----- idList, stringList, parameterList, predicateList -----
+
     // idList -> COMMA ID idList | lambda
     void idList()
     {
@@ -79,6 +81,42 @@ public:
             // lambda
         }
     }
+
+
+    // predicateList ->	COMMA predicate predicateList | lambda
+    void predicateList() {
+        if (tokenType() == COMMA) {
+            match(COMMA);
+            // predicate();
+            // predicateList();
+        } else {
+            // lambda
+        }
+    }
+
+    // parameterList -> COMMA parameter parameterList | lambda
+    void parameterList() {
+        if (tokenType() == COMMA) {
+            match(COMMA);
+            // parameter();
+            // parameterList();
+        } else {
+            // lambda
+        }
+    }
+
+    // stringList -> COMMA STRING stringList | lambda
+    void stringList() {
+        if (tokenType() == COMMA) {
+            match(COMMA);
+            match(ID);
+            idList();
+        } else {
+            // lambda
+        }
+    }
+
+    // ----- scheme, fact, rule, query -----
 
     // scheme -> ID LEFT_PAREN ID idList RIGHT_PAREN
     void scheme()
@@ -98,6 +136,21 @@ public:
         // stringList();
         match(RIGHT_PAREN);
         match(PERIOD);
+    }
+
+    // rule -> headPredicate COLON_DASH predicate predicateList PERIOD
+    void rule() {
+        // headPredicate();
+        match(COLON_DASH);
+        // predicate();
+        // predicateList();
+        match(PERIOD);
+    }
+
+    // query -> predicate Q_MARK
+    void query() {
+        // predicate();
+        match(Q_MARK);
     }
 
     /*
