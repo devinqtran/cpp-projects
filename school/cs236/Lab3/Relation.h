@@ -61,9 +61,34 @@ public:
     }
 
     // Project takes a vector<int> of indexes, loops through each tuple, extracts the values at the specific index to create new smaller tuples, updates Scheme
-    Relation project(vector<int> indices) {
+    Relation project(vector<int> indices) const {
+        vector<string> newNames; // new Schneme (headers)
+        for (size_t i = 0; i < indices.size(); ++i) {
+            int targetIndex = indices.at(i);
+            newNames.push_back(scheme.at(targetIndex));
+        }
+        Scheme newScheme(newNames);
 
+        // new Relation using the new scheme
+        Relation result(name, newScheme);
 
+        // new Tuples (rows)
+        for (const Tuple& tuple : tuples) {
+            vector<string> newTupleValues;
+
+            for (size_t i = 0; i < indices.size(); ++i) {
+                int targetIndex  = indices.at(i);
+                newTupleValues.push_back(tuple.at(targetIndex));
+            }
+
+            // new smaller Tuple
+            Tuple newTuple(newTupleValues);
+
+            // add new Tuple to result Relation
+            result.addTuple(newTuple);
+        }
+
+        return result;
     }
 
     // Rename takes a vector<string> of new attribute names and replaces the relation's Scheme with these names (query variables)
