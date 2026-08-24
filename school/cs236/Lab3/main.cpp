@@ -30,4 +30,9 @@ int main() {
   cout << "relation:" << endl;
   cout << relation.toString();
 
+  Relation result = relation.select(2, "'CS'");
+
+  cout << "select Major='CS' result:" << endl;
+  cout << result.toString();
+
 }

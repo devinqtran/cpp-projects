@@ -39,7 +39,7 @@ public:
         
         // print "name=value" pairs
         for (size_t i = 0; i < scheme.size(); ++i) {
-            out << scheme.at(i) << "='" << tuple.at(i) << "'";
+            out << scheme.at(i) << "=" << tuple.at(i);
         
             // print comma and space if not last element
             if (i < scheme.size()- 1) {
