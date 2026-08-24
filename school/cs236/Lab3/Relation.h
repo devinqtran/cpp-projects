@@ -36,17 +36,10 @@ public:
         return out.str();
     }
 
-    // Relation select function returns a new Relation that contains a subset of Tuplesw from an existing Relation that meet a select condition
-    // a given position in that Tuple must have a given value
+    // Select 1 (Select by value) returns a new Relation containing only rows where index matches a constant value (column 1 == column 2)
     Relation select(int index, const string& value) const {
         Relation result(name, scheme);
         // add tuples to the result if they meet the condition
-
-        /*
-            for each tuple in the relation
-                if the value at the given index equals the given value
-                    add the tuple to the result
-        */
         for (const Tuple& tuple: tuples) {
             if (tuple.at(index) == value) {
                 result.addTuple(tuple);
@@ -54,6 +47,31 @@ public:
         }
 
         return result;
+    }
+
+    // Select 2 (Select by variable) loops through two column index, keeps only the columns where the value at index1 matches the value at index2 (SK(X,X))
+    Relation select(int index1, int index2) const {
+        Relation result(name, scheme);
+        for (const Tuple& tuple: tuples) {
+            if (tuple.at(index1) == tuple.at(index2)) {
+                result.addTuple(tuple);
+            }
+        }
+        return result;
+    }
+
+    // Project takes a vector<int> of indexes, loops through each tuple, extracts the values at the specific index to create new smaller tuples, updates Scheme
+    Relation project(vector<int> indices) {
+
+
+    }
+
+    // Rename takes a vector<string> of new attribute names and replaces the relation's Scheme with these names (query variables)
+    Relation rename(vector<string> newNames) {
+        // for Scheme scheme : schemes
+        // replace name with newNames
+
+        // return new relation with newNames
     }
 
 };
