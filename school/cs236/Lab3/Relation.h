@@ -93,10 +93,20 @@ public:
 
     // Rename takes a vector<string> of new attribute names and replaces the relation's Scheme with these names (query variables)
     Relation rename(vector<string> newNames) {
-        // for Scheme scheme : schemes
-        // replace name with newNames
+        
+        // create a new Scheme using the newNames
+        Scheme newScheme(newNames);
+
+        // Create a new Relation called result using the newScheme
+        Relation result(name, newScheme);
+
+        // copy tuples from current relation into the new one
+        for (const Tuple& tuple : tuples) {
+            result.addTuple(tuple);
+        }
 
         // return new relation with newNames
+        return result;
     }
 
 };
