@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <sstream>
 #include "Scheme.h"
 #include "Tuple.h"
 
@@ -22,5 +23,16 @@ public:
     // method for adding a tuple to the set tuples
     void addTuple(const Tuple& tuple) {
         tuples.insert(tuple);
+    }
+
+    // toString
+    string toString() const {
+        stringstream out;
+
+        // iterate through each tuple in set<Tuple>
+        for (const Tuple& tuple: tuples) {
+            out << tuple.toString(scheme) << "\n";
+        }
+        return out.str();
     }
 };
