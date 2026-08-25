@@ -20,7 +20,6 @@ public:
     Interpreter(const DatalogProgram& program) : program(program) { }
 
     void interpret() {
-        // Add evaluate functions below
         evaluateSchemes();
         evaluateFacts();
         evaluateQueries();
@@ -49,15 +48,78 @@ public:
 
     // evaluate facts - add the tuples to the relations in the database
     void evaluateFacts() {
-
+        for (auto fact : program.getFacts()) {
+            string relationName = fact.getName();
+            
+            vector<string> tupleValues;
+            for (auto parameter : fact.getParameters()) {
+                tupleValues.push_back(parameter.toString());
+            }
+            
+            Tuple newTuple(tupleValues);
+            database.getRelation(relationName).addTuple(newTuple);
+        }
     }
 
     // evaluate queries
     void evaluateQueries() {
+        // loop through each query in the DatalogProgram
+        for (auto query : program.getQueries()) {
+            
+            // starting Relation is the relation from the database that matches the query name
+            Relation result = database.getRelation(query.getName());
 
+            // Trackers for our variables
+            map<string, int> seenVariables; // map a variable name to its column index
+            vector<int> projectIndices;     // column indicies to keep
+            vector<string> renameHeaders;   // new headers for the renamed relation
+
+            // select
+            vector<Parameter> parameters = query.getParameters();
+            for (size_t i = 0; i < parameters.size(); ++i) {
+                // get the string value of the parameter at index i
+                string paramValue = parameters.at(i).toString();
+
+                if (paramValue.at(0) == '\'') {
+                    // constant starts with a quote
+                    result = result.select(i, paramValue);
+                } 
+                else {
+                    // variable ID
+                    if (seenVariables.find(paramValue) != seenVariables.end()) {
+                        result = result.select(seenVariables[paramValue], i);
+                    } 
+                    else {
+                        // remember this variable for future reference
+                        seenVariables.insert({paramValue, i});
+                        projectIndices.push_back(i);
+                        renameHeaders.push_back(paramValue);
+                    }
+                }
+            }
+            // project
+            result = result.project(projectIndices);
+
+            // rename
+            result = result.rename(renameHeaders);
+
+            // print the result of the query
+            cout << query.toString() << "? "; 
+
+            if (result.getTuples().empty()) {
+                cout << "No" << endl;
+            } 
+            else {
+                cout << "Yes(" << result.getTuples().size() << ")" << endl;
+                // prints only the result tuples
+                if (!projectIndices.empty()) {
+                    cout << result.toString(); 
+                }
+            }
+        }
     }
 
-    // Temporary getter for testing
+    // temporary getter for testing
     Database& getDatabase() {
       return database;
     }

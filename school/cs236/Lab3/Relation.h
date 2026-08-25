@@ -31,7 +31,7 @@ public:
 
         // iterate through each tuple in set<Tuple>
         for (const Tuple& tuple: tuples) {
-            out << tuple.toString(scheme) << "\n";
+            out << "  " <<tuple.toString(scheme) << "\n";
         }
         return out.str();
     }

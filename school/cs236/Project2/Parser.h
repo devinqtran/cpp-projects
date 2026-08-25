@@ -22,8 +22,8 @@ public:
         try {
             // parse top-level grammar rule
             program = datalogProgram();
-            std::cout << "Success!\n";
-            std::cout << program.toString(); // this prints the full AST
+            // std::cout << "Success!\n";
+            // std::cout << program.toString(); // this prints the full AST
         }    
         catch (const Token& errorToken) {
             // catch the thrown error token and report error
