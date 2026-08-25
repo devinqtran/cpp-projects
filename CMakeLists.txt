@@ -24,7 +24,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(raylib)
 
-# add_subdirectory(algorithms)
+add_subdirectory(algorithms)
 add_subdirectory(data_structures)
 add_subdirectory(practice)
 # add_subdirectory(projects)
