@@ -25,6 +25,11 @@ public:
         return parameters;
     }
 
+    // Getter method for name
+    string getName() const {
+        return name;
+    }
+
     // toString method for printing the values
     string toString() const {
         string result = name + "(";

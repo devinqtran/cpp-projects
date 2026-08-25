@@ -83,4 +83,11 @@ public:
 
         return out.str(); // returns the output stringstream called out converted to a string
     }
+
+    // Getter methods for the vectors
+    const vector<Predicate> &getSchemes() const { return schemes; }
+    const vector<Predicate> &getFacts() const { return facts; }
+    const vector<Rule> &getRules() const { return rules; }
+    const vector<Predicate> &getQueries() const { return queries; }
+
 };

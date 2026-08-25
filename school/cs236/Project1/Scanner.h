@@ -194,4 +194,19 @@ public:
         input = input.substr(1);
         return Token(UNDEFINED, string(1, c), line);
     }
+
+    // Method for tokenizing
+    vector<Token> tokenize() {
+        vector<Token> tokens;
+        Token currentToken = scanToken();
+        
+        while (currentToken.getType() != END) {
+            tokens.push_back(currentToken);
+            currentToken = scanToken();
+        }
+        
+        tokens.push_back(currentToken);
+        
+        return tokens;
+    }
 };

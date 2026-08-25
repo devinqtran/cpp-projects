@@ -11,6 +11,7 @@ class Parser
 {
 private:
     vector<Token> tokens; // a private vector of Token objects called token
+    DatalogProgram program; // a private DatalogProgram object called program
 
 public:
     // Constructor receives a reference to the tokens vector of Token objects
@@ -20,7 +21,7 @@ public:
     void parse() {
         try {
             // parse top-level grammar rule
-            DatalogProgram program = datalogProgram();
+            program = datalogProgram();
             std::cout << "Success!\n";
             std::cout << program.toString(); // this prints the full AST
         }    
@@ -62,6 +63,11 @@ public:
         {
             throwError();
         }
+    }
+
+    // getter for the DatalogProgram object
+    const DatalogProgram& getProgram() const {
+        return program;
     }
 
     // ----- schemeList, factList, ruleList, queryList -----

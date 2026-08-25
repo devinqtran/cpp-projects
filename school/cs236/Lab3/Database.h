@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
@@ -24,4 +25,11 @@ public:
         return relations.at(name);
     }
 
+    void printDatabase() {
+      cout << "--- Database Contents ---" << endl;
+      for (auto const& [name, relation] : relations) {
+          cout << "Table Name: " << name 
+               << " | Columns: " << relation.getScheme().size() << endl;
+      }
+   }
 };

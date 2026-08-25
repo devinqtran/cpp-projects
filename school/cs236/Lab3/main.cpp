@@ -1,64 +1,108 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <sstream>
+#include "C:\Users\devin\OneDrive\Desktop\cpp-projects\school\cs236\Project1\Scanner.h"
+#include "C:\Users\devin\OneDrive\Desktop\cpp-projects\school\cs236\Project2\Parser.h"
+#include "Interpreter.h"
 #include "Relation.h"
 #include "Tuple.h"
 #include "Scheme.h"
 
 using namespace std;
 
-int main()
-{
+// int main()
+// {
 
-    vector<string> names = {"ID", "Name", "Major"};
-    Scheme scheme(names);
-    Relation relation("student", scheme);
+//     vector<string> names = {"ID", "Name", "Major"};
+//     Scheme scheme(names);
+//     Relation relation("student", scheme);
 
-    vector<string> values[] = {
-        {"'42'", "'Ann'", "'CS'"},
-        {"'32'", "'Bob'", "'CS'"},
-        {"'64'", "'Ned'", "'EE'"},
-        {"'16'", "'Jim'", "'EE'"},
-        {"'99'", "'99'", "'CS'"} // Added to test Select 2 (ID == Name)
-    };
+//     vector<string> values[] = {
+//         {"'42'", "'Ann'", "'CS'"},
+//         {"'32'", "'Bob'", "'CS'"},
+//         {"'64'", "'Ned'", "'EE'"},
+//         {"'16'", "'Jim'", "'EE'"},
+//         {"'99'", "'99'", "'CS'"} // Added to test Select 2 (ID == Name)
+//     };
 
-    cout << "--- Adding Tuples ---" << endl;
-    for (auto &value : values)
-    {
-        Tuple tuple(value);
-        cout << tuple.toString(scheme) << endl;
-        relation.addTuple(tuple);
+//     cout << "--- Adding Tuples ---" << endl;
+//     for (auto &value : values)
+//     {
+//         Tuple tuple(value);
+//         cout << tuple.toString(scheme) << endl;
+//         relation.addTuple(tuple);
+//     }
+
+//     // Original Relation
+//     cout << "\n--- Original Relation ---" << endl;
+//     cout << relation.toString();
+
+//     // Relation Select 1 (Constant Match)
+//     // Find all rows where Major (index 2) is 'CS'
+//     Relation select1Result = relation.select(2, "'CS'");
+//     cout << "\n--- Select 1: Major == 'CS' ---" << endl;
+//     cout << select1Result.toString();
+
+//     // Relation Select 2 (Variable Match)
+//     // Find all rows where ID (index 0) matches Name (index 1)
+//     Relation select2Result = relation.select(0, 1);
+//     cout << "\n--- Select 2: ID == Name ---" << endl;
+//     cout << select2Result.toString();
+
+//     // Relation Project
+//     // Keep only the Name and Major columns (indices 1 and 2) from Select 1 result
+//     vector<int> columnsToKeep = {1, 2};
+//     Relation projectResult = select1Result.project(columnsToKeep);
+//     cout << "\n--- Project: Keep Name and Major (from Select 1) ---" << endl;
+//     cout << projectResult.toString();
+
+//     // Relation Rename
+//     // Rename the headers of Project result
+//     vector<string> newHeaders = {"StudentName", "StudentField"};
+//     Relation renameResult = projectResult.rename(newHeaders);
+//     cout << "\n--- Rename: Headers to 'StudentName' and 'StudentField' ---" << endl;
+//     cout << renameResult.toString();
+
+//     return 0;
+// }
+
+int main(int argc, char** argv) {
+    if (argc < 2) {
+        cerr << "Please provide an input file." << endl;
+        return 1;
     }
 
-    // Original Relation
-    cout << "\n--- Original Relation ---" << endl;
-    cout << relation.toString();
+    // 1. Read the file into a single string
+    ifstream file(argv[1]);
+    stringstream buffer;
+    buffer << file.rdbuf();
+    string input = buffer.str();
 
-    // Relation Select 1 (Constant Match)
-    // Find all rows where Major (index 2) is 'CS'
-    Relation select1Result = relation.select(2, "'CS'");
-    cout << "\n--- Select 1: Major == 'CS' ---" << endl;
-    cout << select1Result.toString();
+    // 2. Initialize the Scanner
+    Scanner scanner(input);
+    vector<Token> tokens;
 
-    // Relation Select 2 (Variable Match)
-    // Find all rows where ID (index 0) matches Name (index 1)
-    Relation select2Result = relation.select(0, 1);
-    cout << "\n--- Select 2: ID == Name ---" << endl;
-    cout << select2Result.toString();
+    // 3. Loop to get all tokens
+    Token currentToken = scanner.scanToken();
+    while (currentToken.getType() != END) { // Adjust if your Token class uses a different getter
+        tokens.push_back(currentToken);
+        currentToken = scanner.scanToken();
+    }
+    tokens.push_back(currentToken); // Add the END token
 
-    // Relation Project
-    // Keep only the Name and Major columns (indices 1 and 2) from Select 1 result
-    vector<int> columnsToKeep = {1, 2};
-    Relation projectResult = select1Result.project(columnsToKeep);
-    cout << "\n--- Project: Keep Name and Major (from Select 1) ---" << endl;
-    cout << projectResult.toString();
+    // 4. Run the Parser
+    Parser parser(tokens);
+    parser.parse();
+    
+    // 5. Run the Interpreter Schemes test
+    DatalogProgram program = parser.getProgram(); // Assuming you have this getter in Parser
+    Interpreter interpreter(program);
+    interpreter.evaluateSchemes();
 
-    // Relation Rename
-    // Rename the headers of Project result
-    vector<string> newHeaders = {"StudentName", "StudentField"};
-    Relation renameResult = projectResult.rename(newHeaders);
-    cout << "\n--- Rename: Headers to 'StudentName' and 'StudentField' ---" << endl;
-    cout << renameResult.toString();
+    // 6. Print the database to verify
+    interpreter.getDatabase().printDatabase();
 
     return 0;
 }

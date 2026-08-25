@@ -109,4 +109,9 @@ public:
         return result;
     }
 
+    // Getter methods
+    const Scheme& getScheme() const { return scheme; }
+    const set<Tuple>& getTuples() const { return tuples; }
+    
+
 };
