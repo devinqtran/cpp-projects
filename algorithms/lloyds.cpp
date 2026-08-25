@@ -54,17 +54,18 @@ std::vector<Point> lloyds(
         used[idx] = 1; // mark this index in the used array as 1 so it will not be used again
     }
 
-    std::vector<int> assignments(n, -1);
+    std::vector<int> assignments(n, -1); // create a new array assignments for n data points filled with -1
 
+    // loop until convergence or max iterations
     for (int iter = 0; iter < maxIter; ++iter) {
         // 2. Assign each point to nearest centroid
         
         for (int i = 0; i < n; ++i) {
-            double bestDist = std::numeric_limits<double>::max();
-            int bestIdx = 0;
-            for (int j = 0; j < k; ++j) {
-                double d = distSq(points[i], centroids[j]);
-                if (d < bestDist) {
+            double bestDist = std::numeric_limits<double>::max(); // set bestDist to the maximum number in C++ guarantees next num will be smaller
+            int bestIdx = 0; // hold the index of the closest centroid for current point
+            for (int j = 0; j < k; ++j) { // loop through all k centroids to find which is closest to current point i
+                double d = distSq(points[i], centroids[j]); // calculate the squared distance between point i and centroid j
+                if (d < bestDist) { // check if d is smaller than bestDist and update accordingly
                     bestDist = d;
                     bestIdx = j;
                 }
@@ -73,33 +74,31 @@ std::vector<Point> lloyds(
         }
 
         // 3. Recompute centroids as the mean of each cluster
-        std::vector<Point> newCentroids(k, {0.0, 0.0});
-        std::vector<int> counts(k, 0);
+        std::vector<Point> newCentroids(k, {0.0, 0.0}); // temporary array for storing the newcentroids of count k and xy 0.0
+        std::vector<int> counts(k, 0); // array to count how many points in each cluster
 
-        for (int i = 0; i < n; ++i) {
-            int c = assignments[i];
+        for (int i = 0; i < n; ++i) { // adds the point's X and Y coordinates to running total for that cluster in newCentroids
+            int c = assignments[i]; 
             newCentroids[c].x += points[i].x;
             newCentroids[c].y += points[i].y;
             counts[c]++;
         }
-        for (int j = 0; j < k; ++j) {
-            if (counts[j] > 0) {
-                newCentroids[j].x /= counts[j];
+        for (int j = 0; j < k; ++j) { // loop through the k clusters
+            if (counts[j] > 0) { // if a cluster has points in it
+                newCentroids[j].x /= counts[j]; // divide sum of X + Y by number of points (counts[j])
                 newCentroids[j].y /= counts[j];
             }
-            // If a cluster is empty, keep the old centroid in place
-            // (or re-initialize — see note below)
         }
 
         // 4. Check for convergence: did any centroid move beyond tolerance value?
-        double maxShift = 0.0;
+        double maxShift = 0.0; // variable for tracking the maximum distance any single centroid moved
         for (int j = 0; j < k; ++j)
-            maxShift = std::max(maxShift, distSq(centroids[j], newCentroids[j]));
+            maxShift = std::max(maxShift, distSq(centroids[j], newCentroids[j])); // calculates how far each centroid moved from centroids[j] to newCentroids[j]
 
-        centroids = newCentroids;
+        centroids = newCentroids; // overwrite old centroids with the newly calculated ones
 
-        if (maxShift < tolerance * tolerance) {
-            std::cout << "Converged after " << iter + 1 << " iterations.\n";
+        if (maxShift < tolerance * tolerance) { // check if the maximum distance any centroid moved is smaller than the tolerance squared
+            std::cout << "Converged after " << iter + 1 << " iterations.\n"; // if it barely moved then the algorithm has found stable clusters
             break;
         }
     }
