@@ -135,12 +135,12 @@ public:
         for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
             const string& leftName = leftScheme.at(leftIndex);
             const string& leftValue = leftTuple.at(leftIndex);
-            cout << "left name: " << leftName << " value: " << leftValue << endl;
+            // cout << "left name: " << leftName << " value: " << leftValue << endl;
 
             for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
                 const string& rightName = rightScheme.at(rightIndex);
                 const string& rightValue = rightTuple.at(rightIndex);
-                cout << "right name: " << rightName << " value: " << rightValue << endl;
+                // cout << "right name: " << rightName << " value: " << rightValue << endl;
 
                 if (leftName == rightName && leftValue != rightValue) {
                     return false;
