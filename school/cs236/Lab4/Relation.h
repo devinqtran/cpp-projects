@@ -158,13 +158,15 @@ public:
         // new joinScheme
         Scheme newScheme = joinSchemes(left.getScheme(), right.getScheme());
 
-        Relation result(left.name + "_join", newScheme);
+        Relation result(left.name + "_join_" + right.name, newScheme);
 
         // Nested loop
         for (const Tuple& leftTuple : left.getTuples()) {
-            cout << "left tuple: " << leftTuple.toString(left.scheme) << endl;
             for (const Tuple& rightTuple : right.getTuples()) {
-                cout << "right tuple: " << rightTuple.toString(right.scheme) << endl;
+                if (joinable(left.getScheme(), right.getScheme(), leftTuple, rightTuple)) {
+                    Tuple newTuple = joinTuples(left.getScheme(), right.getScheme(), leftTuple, rightTuple);
+                    result.addTuple(newTuple);
+                }
             }
         }
 
@@ -201,6 +203,34 @@ public:
 
         // return the new scheme using the joinedNames
         return Scheme(joinedNames);
+    }
+
+    // Result Tuple must match newScheme from joinSchemes take all left values, only add values for UNIQUE right attributes
+    Tuple joinTuples(const Scheme& leftScheme, const Scheme& rightScheme, const Tuple& leftTuple, const Tuple& rightTuple) {
+        vector<string> joinedValues;
+
+        // add all left attributes
+        for (unsigned leftIndex = 0; leftIndex < leftTuple.size(); leftIndex++) {
+            joinedValues.push_back(leftTuple.at(leftIndex));
+        }
+
+        // add all the UNIQUE right values (same as joinSchemes)
+        for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
+            const string& rightName = rightScheme.at(rightIndex);
+            bool unique = true;
+
+            for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
+                if (leftScheme.at(leftIndex) == rightName) {
+                    unique = false;
+                    break;
+                }
+            }
+            if (unique) {
+                joinedValues.push_back(rightTuple.at(rightIndex));
+            }
+        }
+
+        return Tuple(joinedValues);
     }
 
 };
