@@ -171,6 +171,38 @@ public:
         return result;
     }
 
+    // Result Scheme needs all attributes from leftScheme, and UNIQUE attributes from rightScheme
+    Scheme joinSchemes(const Scheme& leftScheme, const Scheme& rightScheme) {
+        vector<string> joinedNames; // new vector of strings to store all names
+
+        // input left attributes
+        for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
+            joinedNames.push_back(leftScheme.at(leftIndex));
+        }
+
+        // loop through right and add UNIQUE attributes
+        for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
+            const string& rightName = rightScheme.at(rightIndex);
+            bool unique = true;
+
+            // check if rightName is in leftScheme already
+            for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
+                if (leftScheme.at(leftIndex) == rightName) {
+                    unique = false;
+                    break;
+                }
+            }
+
+            // add the unique names to joinedNames
+            if (unique) {
+                joinedNames.push_back(rightName);
+            }
+        }
+
+        // return the new scheme using the joinedNames
+        return Scheme(joinedNames);
+    }
+
 };
 
 /*
