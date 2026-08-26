@@ -155,10 +155,10 @@ public:
     Relation join(const Relation& right) {
         const Relation& left = *this;
 
-        // Temp Scheme
-        Scheme tempScheme = left.getScheme();
+        // new joinScheme
+        Scheme newScheme = joinSchemes(left.getScheme(), right.getScheme());
 
-        Relation result(left.name + "_join", tempScheme);
+        Relation result(left.name + "_join", newScheme);
 
         // Nested loop
         for (const Tuple& leftTuple : left.getTuples()) {
