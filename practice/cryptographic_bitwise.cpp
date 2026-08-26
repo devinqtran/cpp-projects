@@ -12,7 +12,7 @@ std::string xorEncryptDecrypt(const std::string& input, char key) {
 
 int main() {
     std::string message = "SecretMessage123";
-    char secretKey = 'K';
+    char secretKey = 'W';
 
     // Encrypt the message
     std::string encrypted = xorEncryptDecrypt(message, secretKey);
