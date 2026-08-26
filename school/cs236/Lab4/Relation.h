@@ -125,7 +125,6 @@ public:
         //     const string& leftValue = leftTuple.at(leftIndex);
         //     cout << "left name: " << leftName << " value: " << leftValue << endl;
         // }
-
         // for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
         //     const string& rightName = rightScheme.at(rightIndex);
         //     const string& rightValue = rightTuple.at(rightIndex);
@@ -137,15 +136,49 @@ public:
             const string& leftName = leftScheme.at(leftIndex);
             const string& leftValue = leftTuple.at(leftIndex);
             cout << "left name: " << leftName << " value: " << leftValue << endl;
+
             for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
                 const string& rightName = rightScheme.at(rightIndex);
                 const string& rightValue = rightTuple.at(rightIndex);
                 cout << "right name: " << rightName << " value: " << rightValue << endl;
+
+                if (leftName == rightName && leftValue != rightValue) {
+                    return false;
+                }
             }
         }
 
         return true;
     }
     
+    // join function
+    Relation join(const Relation& right) {
+        const Relation& left = *this;
+
+        // Temp Scheme
+        Scheme tempScheme = left.getScheme();
+
+        Relation result(left.name + "_join", tempScheme);
+
+        // Nested loop
+        for (const Tuple& leftTuple : left.getTuples()) {
+            cout << "left tuple: " << leftTuple.toString(left.scheme) << endl;
+            for (const Tuple& rightTuple : right.getTuples()) {
+                cout << "right tuple: " << rightTuple.toString(right.scheme) << endl;
+            }
+        }
+
+        return result;
+    }
 
 };
+
+/*
+    You should write two more functions:
+
+    1. joinSchemes: combines the schemes for the left and right relations into single scheme for the result relation.
+
+    2. joinTuples: combines tuples from the left and right relations into single tuple for the result relation.
+
+    Your 'join' function can call these functions as well as the 'joinable' function to produce the relation that results from the join.
+*/

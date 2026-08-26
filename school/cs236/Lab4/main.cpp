@@ -4,12 +4,28 @@
 
 int main() {
 
-  Scheme scheme1( { "A", "B" } );
-  Scheme scheme2( { "B", "C" } );
+  Relation studentRelation("students", Scheme( {"ID", "Name", "Major"} ));
 
-  Tuple tuple1( {"'1'", "'2'"} );
-  Tuple tuple2( {"'3'", "'4'"} );
+  vector<string> studentValues[] = {
+    {"'42'", "'Ann'", "'CS'"},
+    {"'64'", "'Ned'", "'EE'"},
+  };
 
-  Relation::joinable(scheme1, scheme2, tuple1, tuple2);
+  for (auto& value : studentValues)
+    studentRelation.addTuple(Tuple(value));
+
+//   studentRelation.join(studentRelation);
+
+  Relation courseRelation("courses", Scheme( {"ID", "Course"} ));
+
+  vector<string> courseValues[] = {
+    {"'42'", "'CS 100'"},
+    {"'32'", "'CS 232'"},
+  };
+
+  for (auto& value : courseValues)
+    courseRelation.addTuple(Tuple(value));
+
+  studentRelation.join(courseRelation);
 
 }
