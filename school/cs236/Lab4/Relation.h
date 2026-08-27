@@ -233,14 +233,30 @@ public:
         return Tuple(joinedValues);
     }
 
+    // union - add tuples from right to this relation, return true if new tuples were added
+    bool unionRelation(const Relation& right) {
+        bool newTupleAdded = false;
+
+        for (const Tuple& tuple : right.getTuples()) {
+            if (tuples.insert(tuple).second) {
+                newTupleAdded = true;
+
+                cout << "  " << tuple.toString(scheme) << endl;
+            }
+        }
+        return newTupleAdded;
+    }
+
 };
 
 /*
-    You should write two more functions:
+    TODO: 
+    1. Union operation bool unionRelation(const Relation& right) - take another relation and add all of the tuples to the current relation, 
+    print only the new Tuples, return bool T/F for if Tuples were added
 
-    1. joinSchemes: combines the schemes for the left and right relations into single scheme for the result relation.
+    2. Project operation - implement functionality to change the order of columns (indices = {2, 0} -> should output column 2 first and then 0)
 
-    2. joinTuples: combines tuples from the left and right relations into single tuple for the result relation.
+    3. Rule evaluation - Evaluate, Join, Project, Rename, Union
 
-    Your 'join' function can call these functions as well as the 'joinable' function to produce the relation that results from the join.
+    4. Loop for all rules and track number of passes, stop after ZERO Tuples are added to database
 */
