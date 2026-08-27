@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "C:\\Users\\devin\\OneDrive\\Desktop\\cpp-projects\\school\\cs236\\Project2\\DatalogProgram.h"
+#include "DatalogProgram.h"
 #include "Relation.h"
 #include "Database.h"
 #include "Scheme.h"
@@ -24,6 +24,7 @@ public:
     void interpret() {
         evaluateSchemes();
         evaluateFacts();
+        evaluateRules();
         evaluateQueries();
     }
 
@@ -65,6 +66,9 @@ public:
 
     // evaluate queries
     void evaluateQueries() {
+        // print header
+        cout << "Query Evaluation" << endl;
+
         // loop through each query in the DatalogProgram
         for (auto query : program.getQueries()) {
             
@@ -204,6 +208,40 @@ public:
         bool tuplesAdded = targetRelation.unionRelation(result);
 
         return tuplesAdded;
+    }
+
+    // Fixed-Point loop for evaluateRules
+    void evaluateRules() {
+        // print header
+        cout << "Rule Evaluation" << endl;
+
+        // track passes
+        int passes = 0;
+        bool changed = true;
+
+        // loop
+        while (changed) {
+            passes++;
+
+            // total tuples before pass
+            int startTuples = database.getTotalTuples();
+
+            // evaluate rules in order
+            for (const Rule& rule : program.getRules()) {
+                evaluateRule(rule);
+            }
+
+            // total tuples after pass
+            int endTuples = database.getTotalTuples();
+
+            // check for any new facts
+            if (startTuples == endTuples) {
+                changed = false;
+            }
+        }
+
+        // print footer
+        cout << "\nSchemes populated after " << passes << " passes through the Rules.\n" << endl;
     }
 
     // temporary getter for testing
