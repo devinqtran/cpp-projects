@@ -119,6 +119,48 @@ public:
         }
     }
 
+    // helper method evaluatePredicate
+    Relation evaluatePredicate(const Predicate& p) {
+        Relation result = database.getRelation(p.getName());
+
+        vector<int> projectIndices;
+        vector<string> renameNames;
+        map<string, int> seen;
+
+        // select
+        for (unsigned i = 0; i < p.getParameters().size(); i++) {
+            string parameterValue = p.getParameters().at(i).toString();
+
+            // check for a constant
+            if (parameterValue.at(0) == '\'') {
+                // select 1
+                result = result.select(i, parameterValue);
+            } else {
+                // variable
+                if (seen.find(parameterValue) != seen.end()) {
+                    // select 2
+                    result = result.select(seen[parameterValue], i);
+                } else {
+                    seen[parameterValue];
+                    projectIndices.push_back(i);
+                    renameNames.push_back(parameterValue);
+                }
+            }
+        }
+        // project
+        result = result.project(projectIndices);
+        
+        // rename
+        result = result.rename(renameNames);
+        
+        return result;
+    }
+
+    // evaluate Rule - evaluate predicates on right side and join them, project after matching variable results, rename, and then union, and add tuples
+    bool evaluateRule(const Rule& rule) {
+        
+    }
+
     // temporary getter for testing
     Database& getDatabase() {
       return database;
