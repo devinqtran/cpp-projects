@@ -25,6 +25,15 @@ public:
         return relations.at(name);
     }
 
+    // method for total tuples in database
+    int getTotalTuples() const {
+        int total = 0;
+        for (auto const& [name, relation] : relations) {
+            total += relation.getTuples().size();
+        }
+        return total;
+    }
+
     void printDatabase() {
       cout << "--- Database Contents ---" << endl;
       for (auto const& [name, relation] : relations) {

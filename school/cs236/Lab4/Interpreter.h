@@ -6,6 +6,8 @@
 #include "Relation.h"
 #include "Database.h"
 #include "Scheme.h"
+#include "Rule.h"
+#include "Predicate.h"
 
 using namespace std;
 
@@ -158,7 +160,50 @@ public:
 
     // evaluate Rule - evaluate predicates on right side and join them, project after matching variable results, rename, and then union, and add tuples
     bool evaluateRule(const Rule& rule) {
+        // evaluate
+        Relation result = evaluatePredicate(rule.getBodyPredicates().at(0));
+
+        // join
+        for (size_t i = 1; i < rule.getBodyPredicates().size(); i++) {
+            Relation nextRelation = evaluatePredicate(rule.getBodyPredicates().at(i));
+            result = result.join(nextRelation);
+        }
+
+        // project
+        vector<int> projectIndices;
+        const Predicate& headPredicate = rule.getHeadPredicate();
         
+        for (unsigned i = 0; i < headPredicate.getParameters().size(); i++) {
+            string headVariable = headPredicate.getParameters().at(i).toString();
+            
+            // find the variable within the joined Scheme
+            for (unsigned j = 0; j < result.getScheme().size(); j++) {
+                if (result.getScheme().at(j) == headVariable) {
+                    projectIndices.push_back(j);
+                    break;
+                }
+            }
+        }
+        result = result.project(projectIndices);
+
+        // rename
+        string targetName = headPredicate.getName();
+        Relation& targetRelation = database.getRelation(targetName); // find the target relation
+        
+        // find the targetAttributes
+        vector<string> targetAttributes;
+        for (unsigned i = 0; i < targetRelation.getScheme().size(); i++) {
+            targetAttributes.push_back(targetRelation.getScheme().at(i));
+        }
+        result = result.rename(targetAttributes);
+
+        // union
+        cout << rule.toString() << endl;
+
+        // union the final result and print the tuplesAdded
+        bool tuplesAdded = targetRelation.unionRelation(result);
+
+        return tuplesAdded;
     }
 
     // temporary getter for testing

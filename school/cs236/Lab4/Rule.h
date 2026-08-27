@@ -21,6 +21,16 @@ public:
         bodyPredicates.push_back(p);
     }
 
+    // getter for bodyPredicates
+    const vector<Predicate>& getBodyPredicates() const {
+        return bodyPredicates;
+    }
+
+    // getter for headPredicate
+    const Predicate& getHeadPredicate() const {
+        return headPredicate;
+    }
+
     // toString method for printing the values
     string toString() const {
         string result = headPredicate.toString() + " :- "; // create a string result and initialize it to the value of headPredicate.toString(), then concatenate " :- "
