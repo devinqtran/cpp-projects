@@ -261,18 +261,18 @@ public:
         // from rule R0: A() :- B()
 
         for (int i = 0; i < rules.size(); i++) {
-            cout << "from rule R" << i << ": " << rules[i].toString() << "\n";
+            // cout << "from rule R" << i << ": " << rules[i].toString() << "\n";
 
             for (const auto pred : rules[i].getBodyPredicates()) {
-                cout << "from body predicate: " << pred.toString() << "\n";
+                // cout << "from body predicate: " << pred.toString() << "\n";
 
                 for (int j = 0; j < rules.size(); j++) {
-                    cout << "to rule R" << j << ": " << rules[j].toString() << "\n";
+                    // cout << "to rule R" << j << ": " << rules[j].toString() << "\n";
 
                     // check if the current pred name is the same as rules[j], add edge if so
                     if (pred.getName() == rules[j].getHeadPredicate().getName()) {
                         graph.addEdge(i, j);
-                        cout << "dependency found: (R" << i << ",R" << j << ")" << "\n"; 
+                        // cout << "dependency found: (R" << i << ",R" << j << ")" << "\n"; 
                     }
                 }
             }
