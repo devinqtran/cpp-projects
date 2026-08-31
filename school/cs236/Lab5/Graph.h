@@ -3,6 +3,7 @@
 #include "Node.h"
 #include <string>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -37,28 +38,53 @@ public:
         return nodes;
     }
 
-    // R, nodeID, : , Node.toString() 
-
-    // The 'toString' function prints each Node in the Graph on a separate line.
-    // For each Node, print the node ID for the Node (print the letter R before the ID), 
-    // followed by a colon (:) and the result of the 'toString' function on the Node.
+    // toString method
     string toString() const {
         stringstream out;
 
         for (const auto& pair: nodes) {
             int nodeID = pair.first;
-            Node node = pair.second;
+            const Node& node = pair.second;
 
             out << "R" << nodeID << ":" << node.toString() << endl;
         }
         return out.str();
     }
 
+    // dfs post-order recursive method
+    void dfsPostOrder(int nodeID, vector<int>& postOrder) {
+        nodes[nodeID].markVisited(); // mark the current node as visited
+
+        // go through all adjacent nodes
+        for (int neighborID : nodes[nodeID].getAdjacentNodes()) {
+            if (!nodes[neighborID].isVisited()) {
+                dfsPostOrder(neighborID, postOrder);
+            }
+        }
+        // add the nodeID after searching the children
+        postOrder.push_back(nodeID);
+    }
+
+    // dfsForest post-order method (reverseGraph)
+    vector<int> dfsForestPostOrder() {
+        vector<int> postOrder; 
+        clearFlags(); // unmark all nodes
+    
+        // iterate in numeric order
+        for (auto& pair : nodes) {
+            int nodeID = pair.first;
+            if (!nodes[nodeID].isVisited()) {
+                dfsPostOrder(nodeID, postOrder);
+            }
+        }
+        return postOrder;
+    }
+
 };
 
 /*
     TO DO:
-    1. Build the dependency graph and the reverse dependency graph
+    1. Build the dependency graph and the reverse dependency graph [DONE]
     2. Run DFS-Forest (in regular numeric order) on the reverse dependency graph to get the post-order
     3. Run DFS-Forest (in reverse post-order) on the forward dependency graph to find the strongly connected components
     4. Evaluate the rules in each component
