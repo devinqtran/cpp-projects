@@ -1,28 +1,10 @@
 #include <iostream>
+#include <utility>
 #include "Node.h"
 #include "Graph.h"
 #include "Interpreter.h"
 
 using namespace std;
-
-// test Node.h
-// int main() {
-//   Node node;
-//   node.addEdge(4);
-//   node.addEdge(8);
-//   node.addEdge(2);
-//   cout << node.toString() << endl;
-// }
-
-// test Graph.h
-// int main() {
-//   Graph graph(3);
-//   graph.addEdge(1,2);
-//   graph.addEdge(1,0);
-//   graph.addEdge(0,1);
-//   graph.addEdge(1,1);
-//   cout << graph.toString();
-// }
 
 int main() {
 
@@ -48,7 +30,20 @@ int main() {
     rules.push_back(rule);
   }
 
-  Graph graph = Interpreter::makeGraph(rules);
-  cout << graph.toString();
+  // Call makeGraph using the local 'rules' vector and capture the pair
+  pair<Graph, Graph> graphs = Interpreter::makeGraph(rules);
+  
+  // Extract the individual graphs from the pair
+  Graph forwardGraph = graphs.first;
+  Graph reverseGraph = graphs.second;
 
+  // Print Forward Graph
+  cout << "Dependency Graph\n";
+  cout << forwardGraph.toString();
+
+  // Print Reverse Graph
+  cout << "\nReverse Dependency Graph\n";
+  cout << reverseGraph.toString();
+
+  return 0;
 }

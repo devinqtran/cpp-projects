@@ -55,3 +55,20 @@ public:
     }
 
 };
+
+/*
+    TO DO:
+    1. Build the dependency graph and the reverse dependency graph
+    2. Run DFS-Forest (in regular numeric order) on the reverse dependency graph to get the post-order
+    3. Run DFS-Forest (in reverse post-order) on the forward dependency graph to find the strongly connected components
+    4. Evaluate the rules in each component
+
+    Suggestions:
+    - Create a graph class
+    - Adjacency list implementation (not adjacency matrix)
+    - Graph stores all edges/adjacencies as a map<int,set<int>>
+    - Also store a boolean 'visited' flag for each node
+    - Make all of the functions dfs, dfsForest, etc. in the graph class
+    - You should have a two different dfsForest functions: one for finding the post-order, and one for finding SCCs
+
+*/

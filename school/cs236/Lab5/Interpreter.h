@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <utility>
 #include "DatalogProgram.h"
 #include "Relation.h"
 #include "Database.h"
@@ -251,10 +252,11 @@ public:
     }
 
     // makeGraph
-    static Graph makeGraph(const vector<Rule>& rules) {
+    static pair<Graph, Graph> makeGraph(const vector<Rule>& rules) {
 
-        Graph graph(rules.size());
-        // code for adding edges to the graph using the rule dependencies
+        //  Create a fowardGraph and reverseGraph
+        Graph forwardGraph(rules.size());
+        Graph reverseGraph(rules.size());
 
         // loop over the rule vector
         // print a line like this for each rule:
@@ -271,7 +273,8 @@ public:
 
                     // check if the current pred name is the same as rules[j], add edge if so
                     if (pred.getName() == rules[j].getHeadPredicate().getName()) {
-                        graph.addEdge(i, j);
+                        forwardGraph.addEdge(i, j);
+                        reverseGraph.addEdge(j, i);
                         // cout << "dependency found: (R" << i << ",R" << j << ")" << "\n"; 
                     }
                 }
@@ -280,7 +283,7 @@ public:
 
         
 
-        return graph;
+        return make_pair(forwardGraph, reverseGraph);
     }
 
 
