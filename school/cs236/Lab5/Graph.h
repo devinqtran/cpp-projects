@@ -25,6 +25,18 @@ public:
         nodes[fromNodeID].addEdge(toNodeID);
     }
 
+    // method for clearing flags to false
+    void clearFlags() {
+        for (auto& pair : nodes) {
+            pair.second.clearVisited();
+        }
+    }
+
+    // getter method for getting the nodes map
+    map<int, Node>& getNodes() {
+        return nodes;
+    }
+
     // R, nodeID, : , Node.toString() 
 
     // The 'toString' function prints each Node in the Graph on a separate line.
@@ -33,7 +45,7 @@ public:
     string toString() const {
         stringstream out;
 
-        for (auto& pair: nodes) {
+        for (const auto& pair: nodes) {
             int nodeID = pair.first;
             Node node = pair.second;
 

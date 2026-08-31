@@ -31,13 +31,17 @@ public:
         return visited;
     }
 
+    // method for clearing visited
+    void clearVisited() {
+        visited = false;
+    }
+
     // method for getting the adjacency list
     const set<int>& getAdjacentNodes() const {
         return adjacentNodeIDs;
     }
-    
-    // The 'toString' function prints the node IDs in the 'adjacent node IDs' set as a comma separated list. 
-    // The letter R decoration is printed before each node ID. The node IDs are printed in sorted order. (Using a 'set' makes the sorting automatic.)
+
+    // toString function, prints the node IDs in the 'adjacent node IDs' set as a comma separated list. 
     string toString() const {
         stringstream out;
         bool isFirst = true;
