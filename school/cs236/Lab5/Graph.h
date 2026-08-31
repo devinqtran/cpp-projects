@@ -80,13 +80,47 @@ public:
         return postOrder;
     }
 
+    // dfs recursive method for finding SCCs
+    void dfsSCC(int nodeID, vector<int>& currentSCC) {
+        nodes[nodeID].markVisited(); // mark the current node as visited
+        
+        // add the current component after it is visited
+        currentSCC.push_back(nodeID);
+
+        // loop through all adjacentNodes
+        for (int neighborID : nodes[nodeID].getAdjacentNodes()) {
+            if (!nodes[neighborID].isVisited()) {
+                dfsSCC(neighborID, currentSCC);
+            }
+        }
+    }
+
+    // dfsForest for finding SCCs (forwardGraph)
+    vector<vector<int>> dfsForestSCC(const vector<int>& postOrder) {
+        vector<vector<int>> sccs;
+        clearFlags();
+
+        // loop through the postOrder vector backwards (reverse post-order)
+        for (int i = postOrder.size() - 1; i >= 0; --i) {
+            int nodeID = postOrder[i];
+            
+            // check if node has been visited, if not it is start of new SCC
+            if (!nodes[nodeID].isVisited()) {
+                vector<int> currentSCC;
+                dfsSCC(nodeID, currentSCC);
+                sccs.push_back(currentSCC);
+            }
+        }
+        return sccs;
+    }
+
 };
 
 /*
     TO DO:
     1. Build the dependency graph and the reverse dependency graph [DONE]
-    2. Run DFS-Forest (in regular numeric order) on the reverse dependency graph to get the post-order
-    3. Run DFS-Forest (in reverse post-order) on the forward dependency graph to find the strongly connected components
+    2. Run DFS-Forest (in regular numeric order) on the reverse dependency graph to get the post-order [DONE]
+    3. Run DFS-Forest (in reverse post-order) on the forward dependency graph to find the strongly connected components [DONE]
     4. Evaluate the rules in each component
 
     Suggestions:
